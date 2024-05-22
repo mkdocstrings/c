@@ -1,0 +1,57 @@
+[build-system]
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
+
+[project]
+name = "mkdocstrings-c"
+description = "A C handler for mkdocstrings."
+authors = [{name = "Timothée Mazzucotelli", email = "dev@pawamoy.fr"}]
+license = {text = "ISC"}
+readme = "README.md"
+requires-python = ">=3.8"
+keywords = []
+dynamic = ["version"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Documentation",
+    "Topic :: Software Development",
+    "Topic :: Utilities",
+    "Typing :: Typed",
+]
+dependencies = [
+    "mkdocstrings>=0.18",
+]
+
+[project.urls]
+Homepage = "https://mkdocstrings.github.io/c"
+Documentation = "https://mkdocstrings.github.io/c"
+Changelog = "https://mkdocstrings.github.io/c/changelog"
+Repository = "https://github.com/mkdocstrings/c"
+Issues = "https://github.com/mkdocstrings/c/issues"
+Discussions = "https://github.com/mkdocstrings/c/discussions"
+Gitter = "https://gitter.im/mkdocstrings/c"
+Funding = "https://github.com/sponsors/pawamoy"
+
+[tool.pdm]
+version = {source = "scm"}
+
+[tool.pdm.build]
+package-dir = "src"
+includes = ["src/mkdocstrings_handlers"]
+editable-backend = "editables"
+source-includes = ["share"]
+
+[tool.pdm.build.wheel-data]
+data = [
+    {path = "share/**/*", relative-to = "."},
+]
