@@ -451,6 +451,9 @@ def lookup_type_html(data: CodeDoc, tp: TypeRef, *, name: str | None = None) -> 
 class CHandler(BaseHandler):
     """The C handler class."""
 
+    name: str = "c"
+    """The handler's name."""
+
     domain: str = "c"
     """The cross-documentation domain/language for this handler."""
 
@@ -581,78 +584,13 @@ class CHandler(BaseHandler):
         Returns:
             The rendered template as HTML.
         """
-        html = StringIO()
-
-        for macro in data.macros:
-            html.write(f"""
-<div>
-    <div>Macro:
-        <code>{macro.name}</code>
-        <code>{macro.content or ""}</code>
-        <p>{desc(macro.doc)}</p>
-    </div>
-</div>""")
-
-        for tp in data.typedefs.values():
-            html.write(f"""
-<div>
-    <div id="type-{tp.name}">Typedef:
-        <code>{tp.name}</code>
-        <code>{tp_ref_to_str(tp.tp, tp.name)}</code>
-        <p>{desc(tp.doc)}</p>
-    </div>
-</div>""")
-
-        for var in data.global_vars:
-            html.write(f"""
-<div>
-    <div>Global:
-        {lookup_type_html(data, var.tp)}
-        <code>{var.name}</code>
-        <p>{desc(var.doc)}</p>
-    </div>
-</div>""")
-
-        for func in data.functions:
-            params: list[str] = []
-
-            for param in func.args:
-                params.append(lookup_type_html(data, param.tp, name=param.name) + f"<code>{param.name}</code>")
-
-            table = StringIO()
-
-            if func.doc and func.doc.params:
-                table.write("""
-<table>
-    <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-    </tr>
-""")
-                for doc, param in zip(func.doc.params, func.args):
-                    in_out = "" if doc.in_out == InOut.UNSPECIFIED else ("[in]" if doc.in_out == InOut.IN else "[out]")
-                    table.write(f"""
-<tr>
-    <td>{doc.name}</td>
-    <td>{lookup_type_html(data, param.tp, name=param.name)}{in_out}</td>
-    <td>{doc.desc}</td>
-</tr>
-""")
-                table.write("</table>")
-
-            html.write(f"""
-<div>
-    <div>Function:
-        {lookup_type_html(data, func.ret)}
-        <code>{func.name}</code>
-        ({', '.join(params) if params else 'void'})
-        <p>{desc(func.doc)}</p>
-        {table.getvalue()}
-    </div>
-</div>""")
-
-        return html.getvalue()
+        # final_config = {**self.default_config, **config}
+        # heading_level = final_config["heading_level"]
+        # template = self.env.get_template(f"{data...}.html.jinja")
+        # return template.render(
+        #     **{"config": final_config, data...: data, "heading_level": heading_level, "root": True},
+        # )
+        raise PluginError("Implement me!")
 
     def update_env(self, md: Markdown, config: dict) -> None:
         """Update the Jinja environment with any custom settings/filters/options for this handler.
