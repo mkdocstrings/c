@@ -1,0 +1,36 @@
+{% filter heading(
+    heading_level,
+    id=func.name,
+    class="doc doc-heading",
+    toc_label=('<code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;'|safe if config.show_symbol_type_toc else '') + func.name,
+) %}
+    {% if config.show_symbol_type_heading %}<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>{% endif %}
+    {{ header | lookup_type_html(func.ret) | safe }}
+    <code>{{ func.name }}</code>
+    {% if func.args %}
+        (
+        {%- for param in func.args %}
+            {{ header | lookup_type_html(param.tp, name=param.name) | safe }}<code>{{ param.name }}</code>{{ ", " if not loop.last else "" }}
+        {% endfor -%}
+        )
+    {% else %}
+        void
+    {% endif %}
+{% endfilter %}
+{{ func.doc.desc | default("No description provided.") | convert_markdown(func.name) }}
+{% if func.doc and func.doc.params %}
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Description</th>
+        </tr>
+        {% for doc, param in func.doc.params | zip(func.args) %}
+            <tr>
+                <td>{{ doc.name }}</td>
+                <td>{{ header | lookup_type_html(param.tp, name=param.name) | safe }}{{ "" if doc.in_out == "unspecified" else "[" ~ doc.in_out ~ "]" }}</td>
+                <td>{{ doc.desc | default("No description provided.") | convert_markdown(func.name) }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endif %}

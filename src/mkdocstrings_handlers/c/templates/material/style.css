@@ -1,0 +1,81 @@
+/* Symbols in Navigation and ToC. */
+:root,
+[data-md-color-scheme="default"] {
+  --doc-symbol-var-fg-color: #953800;
+  --doc-symbol-function-fg-color: #8250df;
+  --doc-symbol-typedef-fg-color: #8250df;
+  --doc-symbol-macro-fg-color: #0550ae;
+  --doc-symbol-module-fg-color: #5cad0f;
+
+  --doc-symbol-var-bg-color: #9538001a;
+  --doc-symbol-function-bg-color: #8250df1a;
+  --doc-symbol-typedef-bg-color: #8250df1a;
+  --doc-symbol-macro-bg-color: #0550ae1a;
+  --doc-symbol-module-bg-color: #5cad0f1a;
+}
+
+[data-md-color-scheme="slate"] {
+  --doc-symbol-var-fg-color: #ffa657;
+  --doc-symbol-function-fg-color: #d2a8ff;
+  --doc-symbol-typedef-fg-color: #d2a8ff;
+  --doc-symbol-macro-fg-color: #79c0ff;
+  --doc-symbol-module-fg-color: #baff79;
+
+  --doc-symbol-var-bg-color: #ffa6571a;
+  --doc-symbol-function-bg-color: #d2a8ff1a;
+  --doc-symbol-typedef-bg-color: #d2a8ff1a;
+  --doc-symbol-macro-bg-color: #79c0ff1a;
+  --doc-symbol-module-bg-color: #baff791a;
+}
+
+code.doc-symbol {
+  border-radius: .1rem;
+  font-size: .85em;
+  padding: 0 .3em;
+  font-weight: bold;
+}
+
+code.doc-symbol-var {
+  color: var(--doc-symbol-var-fg-color);
+  background-color: var(--doc-symbol-var-bg-color);
+}
+
+code.doc-symbol-var::after {
+  content: "var";
+}
+
+code.doc-symbol-function {
+  color: var(--doc-symbol-function-fg-color);
+  background-color: var(--doc-symbol-function-bg-color);
+}
+
+code.doc-symbol-function::after {
+  content: "func";
+}
+
+code.doc-symbol-typedef {
+  color: var(--doc-symbol-typedef-fg-color);
+  background-color: var(--doc-symbol-typedef-bg-color);
+}
+
+code.doc-symbol-typedef::after {
+  content: "typedef";
+}
+
+code.doc-symbol-macro {
+  color: var(--doc-symbol-macro-fg-color);
+  background-color: var(--doc-symbol-macro-bg-color);
+}
+
+code.doc-symbol-macro::after {
+  content: "macro";
+}
+
+code.doc-symbol-module {
+  color: var(--doc-symbol-module-fg-color);
+  background-color: var(--doc-symbol-module-bg-color);
+}
+
+code.doc-symbol-module::after {
+  content: "mod";
+}

@@ -29,7 +29,8 @@ classifiers = [
     "Typing :: Typed",
 ]
 dependencies = [
-    "mkdocstrings>=0.18",
+    "mkdocstrings>=0.25",
+    "pycparser>=2.20",
 ]
 
 [project.urls]

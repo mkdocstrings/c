@@ -1,0 +1,11 @@
+{% filter heading(
+    heading_level,
+    id=var.name,
+    class="doc doc-heading",
+    toc_label=('<code class="doc-symbol doc-symbol-toc doc-symbol-var"></code>&nbsp;'|safe if config.show_symbol_type_toc else '') + var.name,
+) %}
+    {% if config.show_symbol_type_heading %}<code class="doc-symbol doc-symbol-heading doc-symbol-var"></code>{% endif %}
+    {{ header | lookup_type_html(var.tp) | safe }}
+    <code>{{ var.name }}</code>
+{% endfilter %}
+{{ var.doc.desc | default("No description provided.") | convert_markdown(var.name) }}

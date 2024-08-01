@@ -1,0 +1,11 @@
+{% filter heading(
+    heading_level,
+    id=macro.name,
+    class="doc doc-heading",
+    toc_label=('<code class="doc-symbol doc-symbol-toc doc-symbol-macro"></code>&nbsp;'|safe if config.show_symbol_type_toc else '') + macro.name,
+) %}
+    {% if config.show_symbol_type_heading %}<code class="doc-symbol doc-symbol-heading doc-symbol-macro"></code>{% endif %}
+    <code>{{ macro.name }}</code>
+    {% if macro.content %}<code>{{ macro.content }}</code>{% endif %}
+{% endfilter %}
+{{ macro.doc.desc | default("No description provided.") | convert_markdown(macro.name) }}

@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING, Any, Iterator
 import pytest
 from markdown.core import Markdown
 from mkdocs import config
-from mkdocs.config.defaults import get_schema
+from mkdocs.config.defaults import MkDocsConfig
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -20,21 +20,12 @@ if TYPE_CHECKING:
 
 @pytest.fixture(name="mkdocs_conf")
 def fixture_mkdocs_conf(request: pytest.FixtureRequest, tmp_path: Path) -> Iterator[config.Config]:
-    """Yield a MkDocs configuration object.
-
-    Parameters:
-        request: Pytest fixture.
-        tmp_path: Pytest fixture.
-
-    Yields:
-        MkDocs config.
-    """
-    conf = config.Config(schema=get_schema())  # type: ignore[call-arg]
+    """Yield a MkDocs configuration object."""
+    conf = MkDocsConfig()
     while hasattr(request, "_parent_request") and hasattr(request._parent_request, "_parent_request"):
         request = request._parent_request
 
     conf_dict = {
-        "config_file_path": "mkdocs.yml",
         "site_name": "foo",
         "site_url": "https://example.org/",
         "site_dir": str(tmp_path),

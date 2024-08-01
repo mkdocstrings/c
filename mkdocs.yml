@@ -116,6 +116,10 @@ plugins:
 - coverage
 - mkdocstrings:
     handlers:
+      c:
+        options:
+          show_symbol_type_heading: true
+          show_symbol_type_toc: true
       python:
         import:
         - https://docs.python.org/3/objects.inv

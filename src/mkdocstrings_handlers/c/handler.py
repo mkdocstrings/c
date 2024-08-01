@@ -161,12 +161,12 @@ def extract_macros(code: str) -> tuple[list[Macro], str]:
     return macros, "\n".join(extracted)
 
 
-class InOut(Enum):
+class InOut(str, Enum):
     """Enumeration for parameter direction."""
 
-    UNSPECIFIED = 0
-    IN = 1
-    OUT = 2
+    UNSPECIFIED = "unspecified"
+    IN = "in"
+    OUT = "out"
 
 
 @dataclass
@@ -320,13 +320,13 @@ class CodeDoc:
     typedefs: dict[str, DocType]
 
 
-class TypeDecl(Enum):
+class TypeDecl(str, Enum):
     """Enumeration for type declarations."""
 
-    NORMAL = 0
-    POINTER = 1
-    ARRAY = 2
-    FUNCTION = 3
+    NORMAL = "normal"
+    POINTER = "pointer"
+    ARRAY = "array"
+    FUNCTION = "function"
 
 
 @dataclass
@@ -413,6 +413,18 @@ def tp_ref_to_str(ref: TypeRef, qualname: str) -> str:
     return f"{ret} (*{qualname})({', '.join(params)})"
 
 
+def typedef_to_str(decl: DocType) -> str:
+    """Convert a typedef to a string.
+
+    Parameters:
+        decl: The typedef to convert.
+
+    Returns:
+        The string representation of the typedef.
+    """
+    return tp_ref_to_str(decl.tp, decl.name)
+
+
 def desc(doc: Docstring | None) -> str:
     """Get the description from a docstring.
 
@@ -441,9 +453,9 @@ def lookup_type_html(data: CodeDoc, tp: TypeRef, *, name: str | None = None) -> 
     """
     tp_str = ""
 
-    for name, doctype in data.typedefs.items():
+    for type_name, doctype in data.typedefs.items():
         if doctype.tp == tp:
-            tp_str = f'<a href="#type-{name}">{name}</a>'
+            tp_str = f'<a href="#type-{type_name}">{type_name}</a>'
 
     return f'<code>{tp_str or tp_ref_to_str(tp, name or "unknown")}</code>'
 
@@ -469,6 +481,8 @@ class CHandler(BaseHandler):
     default_config: ClassVar[dict] = {
         "show_root_heading": False,
         "show_root_toc_entry": True,
+        "show_symbol_type_heading": True,
+        "show_symbol_type_toc_entry": True,
         "heading_level": 2,
     }
     """The default configuration options.
@@ -480,7 +494,7 @@ class CHandler(BaseHandler):
     **`heading_level`** | `int` | The initial heading level to use. | `2`
     """
 
-    def collect(self, identifier: str, config: MutableMapping[str, Any]) -> CollectorItem:  # noqa: ARG002
+    def collect(self, identifier: str, config: MutableMapping[str, Any]) -> CollectorItem:
         """Collect data given an identifier and selection configuration.
 
         In the implementation, you typically call a subprocess that returns JSON, and load that JSON again into
@@ -496,6 +510,9 @@ class CHandler(BaseHandler):
         Returns:
             Anything you want, as long as you can feed it to the `render` method.
         """
+        if config.get("fallback", False):
+            raise CollectionError("Not loading additional headers during fallback")
+
         source = Path(identifier).read_text(encoding="utf-8")
         comments_list, source = extract_comments(source)
         macros_list, source = extract_macros(source)
@@ -573,7 +590,7 @@ class CHandler(BaseHandler):
     # def get_templates_dir(self, handler: str | None = None) -> Path:
     #     return Path.cwd()
 
-    def render(self, data: CodeDoc, config: Mapping[str, Any]) -> str:  # noqa: ARG002
+    def render(self, data: CodeDoc, config: Mapping[str, Any]) -> str:
         """Render a template using provided data and configuration options.
 
         Parameters:
@@ -584,13 +601,15 @@ class CHandler(BaseHandler):
         Returns:
             The rendered template as HTML.
         """
-        # final_config = {**self.default_config, **config}
-        # heading_level = final_config["heading_level"]
-        # template = self.env.get_template(f"{data...}.html.jinja")
-        # return template.render(
-        #     **{"config": final_config, data...: data, "heading_level": heading_level, "root": True},
-        # )
-        raise PluginError("Implement me!")
+        final_config = {**self.default_config, **config}
+        heading_level = final_config["heading_level"]
+        template = self.env.get_template("header.html.jinja")
+        return template.render(
+            config=final_config,
+            header=data,
+            heading_level=heading_level,
+            root=True,
+        )
 
     def update_env(self, md: Markdown, config: dict) -> None:
         """Update the Jinja environment with any custom settings/filters/options for this handler.
@@ -604,6 +623,9 @@ class CHandler(BaseHandler):
         self.env.trim_blocks = True
         self.env.lstrip_blocks = True
         self.env.keep_trailing_newline = False
+        self.env.filters["typedef_to_str"] = typedef_to_str
+        self.env.filters["lookup_type_html"] = lookup_type_html
+        self.env.filters["zip"] = zip
 
 
 def get_handler(

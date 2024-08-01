@@ -1,0 +1,23 @@
+{% if header.macros %}
+    {% for macro in header.macros %}
+        {% include "macro.html.jinja" with context %}
+    {% endfor %}
+{% endif %}
+
+{% if header.typedefs %}
+    {% for tp in header.typedefs.values() %}
+        {% include "typedef.html.jinja" with context %}
+    {% endfor %}
+{% endif %}
+
+{% if header.global_vars %}
+    {% for var in header.global_vars %}
+        {% include "global_var.html.jinja" with context %}
+    {% endfor %}
+{% endif %}
+
+{% if header.functions %}
+    {% for func in header.functions %}
+        {% include "function.html.jinja" with context %}
+    {% endfor %}
+{% endif %}

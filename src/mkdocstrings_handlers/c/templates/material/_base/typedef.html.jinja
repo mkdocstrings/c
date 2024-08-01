@@ -1,0 +1,11 @@
+{% filter heading(
+    heading_level,
+    id=tp.name,
+    class="doc doc-heading",
+    toc_label=('<code class="doc-symbol doc-symbol-toc doc-symbol-typedef"></code>&nbsp;'|safe if config.show_symbol_type_toc else '') + tp.name,
+) %}
+    {% if config.show_symbol_type_heading %}<code class="doc-symbol doc-symbol-heading doc-symbol-typedef"></code>{% endif %}
+    <code>{{ tp.name }}</code>
+    <code>{{ tp | typedef_to_str }}</code>
+{% endfilter %}
+{{ tp.doc.desc | default("No description provided.") | convert_markdown(tp.name) }}
