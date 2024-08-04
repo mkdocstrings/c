@@ -10,4 +10,8 @@ goals:
     features: []
   2000:
     name: FusionDrive Ejection Configuration
-    features: []
+    features:
+    - name: "[Project] A C handler for mkdocstrings"
+      ref: /
+      since: 2024/08/02
+
