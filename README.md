@@ -6,6 +6,9 @@
 
 A C handler for mkdocstrings.
 
+WARNING: **Still in prototyping phase!**
+Feedback is welcome.
+
 ## Installation
 
 This project is available to sponsors only, through my Insiders program.
