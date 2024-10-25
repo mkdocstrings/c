@@ -9,6 +9,9 @@ A C handler for mkdocstrings.
 WARNING: **Still in prototyping phase!**
 Feedback is welcome.
 
+NOTE: **C99 full support, C11 partial support**
+Since data is extraced with [pycparser](https://github.com/eliben/pycparser), only C99 is fully supported, while C11 is partially supported.
+
 ## Installation
 
 This project is available to sponsors only, through my Insiders program.
