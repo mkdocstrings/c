@@ -10,14 +10,13 @@ from io import StringIO
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, ClassVar, Protocol
 
-from mkdocstrings.handlers.base import BaseHandler, CollectionError, CollectorItem
-from mkdocstrings.loggers import get_logger
+from mkdocstrings import BaseHandler, CollectionError, CollectorItem, get_logger
 from pycparser import CParser, c_ast
 
 if TYPE_CHECKING:
     from collections.abc import Mapping, MutableMapping
 
-    from markdown import Markdown
+    from mkdocs.config.defaults import MkDocsConfig
     from pycparser.c_ast import FileAST
 
 
@@ -466,16 +465,16 @@ def lookup_type_html(data: CodeDoc, tp: TypeRef, *, name: str | None = None) -> 
 class CHandler(BaseHandler):
     """The C handler class."""
 
-    name: str = "c"
+    name: ClassVar[str] = "c"
     """The handler's name."""
 
-    domain: str = "c"
+    domain: ClassVar[str] = "c"
     """The cross-documentation domain/language for this handler."""
 
-    enable_inventory: bool = False
+    enable_inventory: ClassVar[bool] = False
     """Whether this handler is interested in enabling the creation of the `objects.inv` Sphinx inventory file."""
 
-    fallback_theme = "material"
+    fallback_theme: ClassVar[str] = "material"
     """The theme to fallback to."""
 
     fallback_config: ClassVar[dict] = {"fallback": True}
@@ -497,7 +496,25 @@ class CHandler(BaseHandler):
     **`heading_level`** | `int` | The initial heading level to use. | `2`
     """
 
-    def collect(self, identifier: str, config: MutableMapping[str, Any]) -> CollectorItem:
+    def __init__(self, config: Mapping[str, Any], base_dir: Path, **kwargs: Any) -> None:
+        """Initialize the handler.
+
+        Parameters:
+            config: The handler configuration.
+            base_dir: The base directory of the project.
+            **kwargs: Arguments passed to the parent constructor.
+        """
+        super().__init__(**kwargs)
+
+        self.config = config
+        self.base_dir = base_dir
+        self.global_options = config.get("options", {})
+
+    def get_options(self, local_options: Mapping[str, Any]) -> Mapping[str, Any]:
+        """Combine configuration options."""
+        return {**self.default_config, **self.global_options, **local_options}
+
+    def collect(self, identifier: str, options: MutableMapping[str, Any]) -> CollectorItem:
         """Collect data given an identifier and selection configuration.
 
         In the implementation, you typically call a subprocess that returns JSON, and load that JSON again into
@@ -507,13 +524,13 @@ class CHandler(BaseHandler):
             identifier: An identifier that was found in a markdown document for which to collect data. For example,
                 in Python, it would be 'mkdocstrings.handlers' to collect documentation about the handlers module.
                 It can be anything that you can feed to the tool of your choice.
-            config: All configuration options for this handler either defined globally in `mkdocs.yml` or
+            options: All configuration options for this handler either defined globally in `mkdocs.yml` or
                 locally overridden in an identifier block by the user.
 
         Returns:
             Anything you want, as long as you can feed it to the `render` method.
         """
-        if config.get("fallback", False):
+        if options.get("fallback", False):
             raise CollectionError("Not loading additional headers during fallback")
 
         source = Path(identifier).read_text(encoding="utf-8")
@@ -590,39 +607,33 @@ class CHandler(BaseHandler):
 
         return CodeDoc(macros, funcs, global_vars, types)
 
-    # def get_templates_dir(self, handler: str | None = None) -> Path:
-    #     return Path.cwd()
-
-    def render(self, data: CodeDoc, config: Mapping[str, Any]) -> str:
+    def render(self, data: CodeDoc, options: MutableMapping[str, Any]) -> str:
         """Render a template using provided data and configuration options.
 
         Parameters:
             data: The data to render that was collected above in `collect()`.
-            config: All configuration options for this handler either defined globally in `mkdocs.yml` or
+            options: All configuration options for this handler either defined globally in `mkdocs.yml` or
                 locally overridden in an identifier block by the user.
 
         Returns:
             The rendered template as HTML.
         """
-        final_config = {**self.default_config, **config}
-        heading_level = final_config["heading_level"]
+        heading_level = options["heading_level"]
         template = self.env.get_template("header.html.jinja")
         return template.render(
-            config=final_config,
+            config=options,
             header=data,
             heading_level=heading_level,
             root=True,
         )
 
-    def update_env(self, md: Markdown, config: dict) -> None:
+    def update_env(self, config: dict) -> None:  # noqa: ARG002
         """Update the Jinja environment with any custom settings/filters/options for this handler.
 
         Parameters:
-            md: The Markdown instance. Useful to add functions able to convert Markdown into the environment filters.
             config: Configuration options for `mkdocs` and `mkdocstrings`, read from `mkdocs.yml`. See the source code
-                of [mkdocstrings.plugin.MkdocstringsPlugin.on_config][] to see what's in this dictionary.
+                of [mkdocstrings.MkdocstringsPlugin.on_config][] to see what's in this dictionary.
         """
-        super().update_env(md, config)  # Add some mkdocstrings default filters such as highlight and convert_markdown
         self.env.trim_blocks = True
         self.env.lstrip_blocks = True
         self.env.keep_trailing_newline = False
@@ -632,27 +643,18 @@ class CHandler(BaseHandler):
 
 
 def get_handler(
-    theme: str,
-    custom_templates: str | None = None,
-    config_file_path: str | None = None,  # noqa: ARG001
-    **config: Any,  # noqa: ARG001
+    handler_config: MutableMapping[str, Any],
+    tool_config: MkDocsConfig,
+    **kwargs: Any,
 ) -> CHandler:
     """Simply return an instance of `CHandler`.
 
-    Parameters:
-        theme: The theme to use when rendering contents.
-        custom_templates: Directory containing custom templates.
-        config_file_path: The MkDocs configuration file path.
-        **config: Configuration passed to the handler.
+    Arguments:
+        handler_config: The handler configuration.
+        tool_config: The tool (SSG) configuration.
 
     Returns:
-        An instance of the handler.
+        An instance of `CHandler`.
     """
-    return CHandler(
-        handler="c",
-        theme=theme,
-        custom_templates=custom_templates,
-        # To pass the following argument,
-        # you'll need to override the handler's __init__ method.
-        # config_file_path=config_file_path,
-    )
+    base_dir = Path(tool_config.config_file_path or "./mkdocs.yml").parent
+    return CHandler(config=handler_config, base_dir=base_dir, **kwargs)
