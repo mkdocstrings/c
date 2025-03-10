@@ -3,23 +3,23 @@
 from __future__ import annotations
 
 from collections import ChainMap
-from typing import TYPE_CHECKING, Any, Iterator
+from typing import TYPE_CHECKING, Any
 
 import pytest
 from markdown.core import Markdown
-from mkdocs import config
 from mkdocs.config.defaults import MkDocsConfig
 
 if TYPE_CHECKING:
+    from collections.abc import Iterator
     from pathlib import Path
 
-    from mkdocstrings.plugin import MkdocstringsPlugin
+    from mkdocstrings import MkdocstringsPlugin
 
     from mkdocstrings_handlers.c.handler import CHandler
 
 
 @pytest.fixture(name="mkdocs_conf")
-def fixture_mkdocs_conf(request: pytest.FixtureRequest, tmp_path: Path) -> Iterator[config.Config]:
+def fixture_mkdocs_conf(request: pytest.FixtureRequest, tmp_path: Path) -> Iterator[MkDocsConfig]:
     """Yield a MkDocs configuration object."""
     conf = MkDocsConfig()
     while hasattr(request, "_parent_request") and hasattr(request._parent_request, "_parent_request"):
@@ -48,7 +48,7 @@ def fixture_mkdocs_conf(request: pytest.FixtureRequest, tmp_path: Path) -> Itera
 
 
 @pytest.fixture(name="plugin")
-def fixture_plugin(mkdocs_conf: config.Config) -> MkdocstringsPlugin:
+def fixture_plugin(mkdocs_conf: MkDocsConfig) -> MkdocstringsPlugin:
     """Return a plugin instance.
 
     Parameters:
@@ -61,7 +61,7 @@ def fixture_plugin(mkdocs_conf: config.Config) -> MkdocstringsPlugin:
 
 
 @pytest.fixture(name="ext_markdown")
-def fixture_ext_markdown(mkdocs_conf: config.Config) -> Markdown:
+def fixture_ext_markdown(mkdocs_conf: MkDocsConfig) -> Markdown:
     """Return a Markdown instance with MkdocstringsExtension.
 
     Parameters:
@@ -84,5 +84,5 @@ def fixture_handler(plugin: MkdocstringsPlugin, ext_markdown: Markdown) -> CHand
         A handler instance.
     """
     handler = plugin.handlers.get_handler("c")
-    handler._update_env(ext_markdown, plugin.handlers._config)
+    handler._update_env(ext_markdown, config=plugin.handlers._tool_config)
     return handler  # type: ignore[return-value]

@@ -23,7 +23,7 @@ if TYPE_CHECKING:
 @pytest.mark.parametrize(
     "identifier",
     [
-        "docs/snippets/hello.h"
+        "docs/snippets/hello.h",
     ],
 )
 def test_render_themes_templates_python(identifier: str, plugin: MkdocstringsPlugin, ext_markdown: Markdown) -> None:

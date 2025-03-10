@@ -10,12 +10,15 @@ from dataclasses import dataclass
 from datetime import date, datetime, timedelta
 from itertools import chain
 from pathlib import Path
-from typing import Iterable, cast
+from typing import TYPE_CHECKING, cast
 from urllib.error import HTTPError
 from urllib.parse import urljoin
 from urllib.request import urlopen
 
 import yaml
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable
 
 logger = logging.getLogger(f"mkdocs.logs.{__name__}")
 
@@ -23,7 +26,7 @@ logger = logging.getLogger(f"mkdocs.logs.{__name__}")
 def human_readable_amount(amount: int) -> str:  # noqa: D103
     str_amount = str(amount)
     if len(str_amount) >= 4:  # noqa: PLR2004
-        return f"{str_amount[:len(str_amount)-3]},{str_amount[-3:]}"
+        return f"{str_amount[: len(str_amount) - 3]},{str_amount[-3:]}"
     return str_amount
 
 

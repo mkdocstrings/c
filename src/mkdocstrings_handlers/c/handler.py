@@ -3,17 +3,20 @@
 from __future__ import annotations
 
 import re
+from collections.abc import Mapping, MutableMapping
 from dataclasses import dataclass
 from enum import Enum
 from io import StringIO
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, ClassVar, Mapping, MutableMapping, Protocol
+from typing import TYPE_CHECKING, Any, ClassVar, Protocol
 
 from mkdocstrings.handlers.base import BaseHandler, CollectionError, CollectorItem
 from mkdocstrings.loggers import get_logger
 from pycparser import CParser, c_ast
 
 if TYPE_CHECKING:
+    from collections.abc import Mapping, MutableMapping
+
     from markdown import Markdown
     from pycparser.c_ast import FileAST
 
@@ -457,7 +460,7 @@ def lookup_type_html(data: CodeDoc, tp: TypeRef, *, name: str | None = None) -> 
         if doctype.tp == tp:
             tp_str = f'<a href="#type-{type_name}">{type_name}</a>'
 
-    return f'<code>{tp_str or tp_ref_to_str(tp, name or "unknown")}</code>'
+    return f"<code>{tp_str or tp_ref_to_str(tp, name or 'unknown')}</code>"
 
 
 class CHandler(BaseHandler):
