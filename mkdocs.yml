@@ -121,7 +121,7 @@ plugins:
           show_symbol_type_heading: true
           show_symbol_type_toc: true
       python:
-        import:
+        inventories:
         - https://docs.python.org/3/objects.inv
         - https://mkdocstrings.github.io/objects.inv
         paths: [src]
