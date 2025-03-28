@@ -20,7 +20,6 @@ nav:
   - Credits: credits.md
   - License: license.md
 - Usage:
-  - usage/index.md
   - Configuration:
     - usage/configuration/index.md
     - General: usage/configuration/general.md

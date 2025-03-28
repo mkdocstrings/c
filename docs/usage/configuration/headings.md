@@ -10,9 +10,9 @@ A custom string to use as the heading of the root object (i.e. the object specif
 WARNING: **Not advised to be used as a global configuration option.** This option is not advised to be used as a global configuration option, as it will override the default heading for all objects. It is recommended to use it only in specific cases where you want to override the heading for a specific object.
 
 ```md title="in docs/some_page.md (local configuration)"
-::: path.to.module
+::: src/hello.h
     options:
-      heading: "My fancy module"
+      heading: "My fancy code"
 ```
 
 [](){ #option-heading_level }
@@ -39,36 +39,10 @@ plugins:
 ```
 
 ```md title="or in docs/some_page.md (local configuration)"
-::: path.to.module
+::: src/hello.h
     options:
       heading_level: 3
 ```
-
-/// admonition | Preview
-    type: preview
-
-//// tab | With level 3 and root heading
-<h3><code>module</code> (3)</h3>
-<p>Docstring of the module.</p>
-<h4><code>ClassA</code> (4)</h4>
-<p>Docstring of class A.</p>
-<h4><code>ClassB</code> (4)</h4>
-<p>Docstring of class B.</p>
-<h5><code>method_1</code> (5)</h5>
-<p>Docstring of the method.</p>
-////
-
-//// tab | With level 3, without root heading
-<p>Docstring of the module.</p>
-<h3><code>ClassA</code> (3)</h3>
-<p>Docstring of class A.</p>
-<h3><code>ClassB</code> (3)</h3>
-<p>Docstring of class B.</p>
-<h4><code>method_1</code> (4)</h4>
-<p>Docstring of the method.</p>
-////
-///
-
 
 [](){ #option-show_symbol_type_heading }
 ## `show_symbol_type_heading`
@@ -78,11 +52,10 @@ plugins:
 Show the symbol type in headings.
 
 This option will prefix headings with
-<code class="doc-symbol doc-symbol-attribute"></code>,
-<code class="doc-symbol doc-symbol-function"></code>,
-<code class="doc-symbol doc-symbol-method"></code>,
-<code class="doc-symbol doc-symbol-class"></code> or
-<code class="doc-symbol doc-symbol-module"></code> types.
+<code class="doc-symbol doc-symbol-c-function"></code>,
+<code class="doc-symbol doc-symbol-c-var"></code>,
+<code class="doc-symbol doc-symbol-c-macro"></code> or
+<code class="doc-symbol doc-symbol-c-typedef"></code> types.
 See also [`show_symbol_type_toc`][show_symbol_type_toc].
 
 To customize symbols, see [Customizing symbol types](../customization.md/#symbol-types).
@@ -97,7 +70,7 @@ plugins:
 ```
 
 ```md title="or in docs/some_page.md (local configuration)"
-::: package.module
+::: src/hello.h
     options:
       show_symbol_type_heading: false
 ```
@@ -106,29 +79,17 @@ plugins:
     type: preview
 
 //// tab | With symbol type in headings
-<h1><code class="doc-symbol doc-symbol-module"></code> <code>module</code></h1>
-<p>Docstring of the module.</p>
-<h2><code class="doc-symbol doc-symbol-attribute"></code> <code>attribute</code></h2>
-<p>Docstring of the module attribute.</p>
-<h2><code class="doc-symbol doc-symbol-function"></code> <code>function</code></h2>
-<p>Docstring of the function.</p>
-<h2><code class="doc-symbol doc-symbol-class"></code> <code>Class</code></h2>
-<p>Docstring of the class.</p>
-<h3><code class="doc-symbol doc-symbol-method"></code> <code>method</code></h3>
-<p>Docstring of the method.</p>
+<h2><code class="doc-symbol doc-symbol-c-function"></code> <code>function</code></h2><p>Docstring of the function.</p>
+<h2><code class="doc-symbol doc-symbol-c-var"></code> <code>var</code></h2><p>Docstring of the var.</p>
+<h2><code class="doc-symbol doc-symbol-c-macro"></code> <code>macro</code></h2><p>Docstring of the macro.</p>
+<h2><code class="doc-symbol doc-symbol-c-typedef"></code> <code>typedef</code></h2><p>Docstring of the typedef.</p>
 ////
 
 //// tab | Without symbol type in headings
-<h1><code>module</code></h1>
-<p>Docstring of the module.</p>
-<h2><code>attribute</code></h2>
-<p>Docstring of the module attribute.</p>
-<h2><code>function</code></h2>
-<p>Docstring of the function.</p>
-<h2><code>Class</code></h2>
-<p>Docstring of the class.</p>
-<h3><code>method</code></h3>
-<p>Docstring of the method.</p>
+<h2><code>function</code></h2><p>Docstring of the function.</p>
+<h2><code>var</code></h2><p>Docstring of the var.</p>
+<h2><code>macro</code></h2><p>Docstring of the macro.</p>
+<h2><code>typedef</code></h2><p>Docstring of the typedef.</p>
 ////
 ///
 
@@ -140,11 +101,10 @@ plugins:
 Show the symbol type in the Table of Contents.
 
 This option will prefix items in the ToC with
-<code class="doc-symbol doc-symbol-attribute"></code>,
-<code class="doc-symbol doc-symbol-function"></code>,
-<code class="doc-symbol doc-symbol-method"></code>,
-<code class="doc-symbol doc-symbol-class"></code> or
-<code class="doc-symbol doc-symbol-module"></code> types.
+<code class="doc-symbol doc-symbol-c-function"></code>,
+<code class="doc-symbol doc-symbol-c-var"></code>,
+<code class="doc-symbol doc-symbol-c-macro"></code> or
+<code class="doc-symbol doc-symbol-c-typedef"></code> types.
 See also [`show_symbol_type_heading`][show_symbol_type_heading].
 
 To customize symbols, see [Customizing symbol types](../customization.md/#symbol-types).
@@ -159,7 +119,7 @@ plugins:
 ```
 
 ```md title="or in docs/some_page.md (local configuration)"
-::: package.module
+::: src/hello.h
     options:
       show_symbol_type_toc: false
 ```
@@ -169,27 +129,19 @@ plugins:
 
 //// tab | With symbol type in ToC
 <ul style="list-style: none;">
-  <li><code class="doc-symbol doc-symbol-module"></code> module</li>
-  <li><code class="doc-symbol doc-symbol-attribute"></code> attribute</li>
-  <li><code class="doc-symbol doc-symbol-function"></code> function</li>
-  <li><code class="doc-symbol doc-symbol-class"></code> Class
-    <ul style="list-style: none;">
-      <li><code class="doc-symbol doc-symbol-method"></code> method</li>
-    </ul>
-  </li>
+  <li><code class="doc-symbol doc-symbol-c-function"></code> function</li>
+  <li><code class="doc-symbol doc-symbol-c-var"></code> var</li>
+  <li><code class="doc-symbol doc-symbol-c-macro"></code> macro</li>
+  <li><code class="doc-symbol doc-symbol-c-typedef"></code> typedef</li>
 </ul>
 ////
 
 //// tab | Without symbol type in ToC
 <ul style="list-style: none;">
-  <li>module</li>
-  <li>attribute</li>
   <li>function</li>
-  <li>Class
-    <ul style="list-style: none;">
-      <li>method</li>
-    </ul>
-  </li>
+  <li>var</li>
+  <li>macro</li>
+  <li>typedef</li>
 </ul>
 ////
 ///
@@ -206,7 +158,7 @@ WARNING: **Not advised to be used as a global configuration option.** This optio
 NOTE: **Use with/without `heading`.** If you use this option without specifying a custom `heading`, the default heading will be used in the page, but the label in the Table of Contents will be the one you specified. By providing both an option for `heading` and `toc_label`, we leave the customization entirely up to you.
 
 ```md title="in docs/some_page.md (local configuration)"
-::: path.to.module
+::: src/hello.h
     options:
       heading: "My fancy module"
       toc_label: "My fancy module"

@@ -10,7 +10,7 @@ For example, globally:
 plugins:
 - mkdocstrings:
     handlers:
-      python:
+      c:
         options:
           do_something: true
 ```
@@ -18,7 +18,7 @@ plugins:
 ...and locally, overriding the global configuration:
 
 ```md title="docs/some_page.md"
-::: package.module.class
+::: src/hello.h
     options:
       do_something: false
 ```

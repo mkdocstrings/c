@@ -20,10 +20,10 @@ plugins:
 ```
 
 ```md title="in docs/some_page.md (local configuration)"
-::: your_package.your_module.your_func
+::: src/hello.h
     options:
       extra:
         foo: bar
 ```
 
-...will inject both `hello` and `foo` into the Jinja context when rendering `your_package.your_module.your_func`.
+...will inject both `hello` and `foo` into the Jinja context when rendering `src/hello.h`.

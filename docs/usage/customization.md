@@ -35,15 +35,27 @@ by overriding the values of our CSS variables, for example:
 
 ```css title="docs/css/mkdocstrings.css"
 [data-md-color-scheme="default"] {
-  --doc-symbol-data-fg-color: #d1b619;
+  --doc-symbol-c-function-fg-color: #8250df;
+  --doc-symbol-c-var-fg-color: #953800;
+  --doc-symbol-c-macro-fg-color: #5cad0f;
+  --doc-symbol-c-typedef-fg-color: #0550ae;
 
-  --doc-symbol-data-bg-color: #d1b6191a;
+  --doc-symbol-c-function-bg-color: #8250df1a;
+  --doc-symbol-c-var-bg-color: #9538001a;
+  --doc-symbol-c-macro-bg-color: #5cad0f1a;
+  --doc-symbol-c-typedef-bg-color: #0550ae1a;
 }
 
 [data-md-color-scheme="slate"] {
-  --doc-symbol-data-fg-color: #46c2cb;
+  --doc-symbol-c-function-fg-color: #d2a8ff;
+  --doc-symbol-c-var-fg-color: #ffa657;
+  --doc-symbol-c-macro-fg-color: #baff79;
+  --doc-symbol-c-typedef-fg-color: #79c0ff;
 
-  --doc-symbol-data-bg-color: #46c2cb1a;
+  --doc-symbol-c-function-bg-color: #d2a8ff1a;
+  --doc-symbol-c-var-bg-color: #ffa6571a;
+  --doc-symbol-c-macro-bg-color: #baff791a;
+  --doc-symbol-c-typedef-bg-color: #79c0ff1a;
 }
 ```
 
@@ -54,32 +66,29 @@ otherwise just override the variables at root level:
 
 ```css title="docs/css/mkdocstrings.css"
 :root {
-  --doc-symbol-data-fg-color: #d1b619;
-
-  --doc-symbol-data-bg-color: #d1b6191a;
+  --doc-symbol-c-function-fg-color: #d1b619;
+  --doc-symbol-c-function-bg-color: #d1b6191a;
 }
 ```
 
 /// admonition | Preview
     type: preview
 
-<div id="preview-symbol-colors">
+<div id="preview-symbol-c-colors">
   <style>
-    [data-md-color-scheme="default"] #preview-symbol-colors {
-      --doc-symbol-data-fg-color: #d1b619;
-
-      --doc-symbol-data-bg-color: #d1b6191a;
+    [data-md-color-scheme="default"] #preview-symbol-c-colors {
+      --doc-symbol-c-function-fg-color: #d1b619;
+      --doc-symbol-c-function-bg-color: #d1b6191a;
     }
 
-    [data-md-color-scheme="slate"] #preview-symbol-colors {
-      --doc-symbol-data-fg-color: #46c2cb;
-
-      --doc-symbol-data-bg-color: #46c2cb1a;
+    [data-md-color-scheme="slate"] #preview-symbol-c-colors {
+      --doc-symbol-c-function-fg-color: #46c2cb;
+      --doc-symbol-c-function-bg-color: #46c2cb1a;
     }
   </style>
   <p>
     Try cycling through the themes to see the colors for each theme:
-    <code class="doc-symbol doc-symbol-data"></code
+    <code class="doc-symbol doc-symbol-c-function"></code
   </p>
 </div>
 
@@ -91,22 +100,22 @@ You can also change the actual symbol names.
 For example, to use single letters instead of truncated types:
 
 ```css title="docs/css/mkdocstrings.css"
-.doc-symbol-data::after {
-  content: "D";
+.doc-symbol-c-function::after {
+  content: "F";
 }
 ```
 
 /// admonition | Preview
     type: preview
 
-<div id="preview-symbol-names">
+<div id="preview-symbol-c-names">
   <style>
-    #preview-symbol-names .doc-symbol-data::after {
-      content: "D";
+    #preview-symbol-c-names .doc-symbol-c-function::after {
+      content: "F";
     }
   </style>
   <ul>
-    <li>Data: <code class="doc-symbol doc-symbol-data"></code></li>
+    <li>Function: <code class="doc-symbol doc-symbol-c-function"></code></li>
   </ul>
 </div>
 
