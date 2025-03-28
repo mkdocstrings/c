@@ -73,7 +73,7 @@ try:
             **kwargs,
         )
 except ImportError:
-    from dataclasses import dataclass
+    from dataclasses import dataclass  # type: ignore[no-redef]
 
     def _Field(*args: Any, **kwargs: Any) -> None:  # type: ignore[misc]  # noqa: N802
         pass
@@ -91,7 +91,7 @@ if sys.version_info >= (3, 10):
 
 # The input config class is useful to generate a JSON schema, see scripts/mkdocs_hooks.py.
 # YORE: EOL 3.9: Replace `**_dataclass_options` with `frozen=True, kw_only=True` within line.
-@dataclass(**_dataclass_options)
+@dataclass(**_dataclass_options)  # type: ignore[call-overload]
 class CInputOptions:
     """Accepted input options."""
 
@@ -155,7 +155,7 @@ class CInputOptions:
 
 
 # YORE: EOL 3.9: Replace `**_dataclass_options` with `frozen=True, kw_only=True` within line.
-@dataclass(**_dataclass_options)
+@dataclass(**_dataclass_options)  # type: ignore[call-overload]
 class COptions(CInputOptions):  # type: ignore[override,unused-ignore]
     """Final options passed as template context."""
 
@@ -170,7 +170,7 @@ class COptions(CInputOptions):  # type: ignore[override,unused-ignore]
 
 # The input config class is useful to generate a JSON schema, see scripts/mkdocs_hooks.py.
 # YORE: EOL 3.9: Replace `**_dataclass_options` with `frozen=True, kw_only=True` within line.
-@dataclass(**_dataclass_options)
+@dataclass(**_dataclass_options)  # type: ignore[call-overload]
 class CInputConfig:
     """C handler configuration."""
 
@@ -192,7 +192,7 @@ class CInputConfig:
 
 
 # YORE: EOL 3.9: Replace `**_dataclass_options` with `frozen=True, kw_only=True` within line.
-@dataclass(**_dataclass_options)
+@dataclass(**_dataclass_options)  # type: ignore[call-overload]
 class CConfig(CInputConfig):  # type: ignore[override,unused-ignore]
     """C handler configuration."""
 

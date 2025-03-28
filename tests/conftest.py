@@ -85,4 +85,4 @@ def fixture_handler(plugin: MkdocstringsPlugin, ext_markdown: Markdown) -> CHand
     """
     handler = plugin.handlers.get_handler("c")
     handler._update_env(ext_markdown, config=plugin.handlers._tool_config)
-    return handler  # type: ignore[return-value]
+    return handler
