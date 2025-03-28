@@ -2,9 +2,9 @@
     heading_level,
     id=func.name,
     class="doc doc-heading",
-    toc_label=('<code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;'|safe if config.show_symbol_type_toc else '') + func.name,
+    toc_label=('<code class="doc-symbol doc-symbol-toc doc-symbol-c-function"></code>&nbsp;'|safe if config.show_symbol_type_toc else '') + func.name,
 ) %}
-    {% if config.show_symbol_type_heading %}<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>{% endif %}
+    {% if config.show_symbol_type_heading %}<code class="doc-symbol doc-symbol-heading doc-symbol-c-function"></code>{% endif %}
     {{ header | lookup_type_html(func.ret) | safe }}
     <code>{{ func.name }}</code>
     {% if func.args %}
