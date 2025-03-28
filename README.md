@@ -13,9 +13,7 @@ Since data is extraced with [pycparser](https://github.com/eliben/pycparser), on
 
 ## Installation
 
-This project is available to sponsors only, through my Insiders program.
-See Insiders [explanation](https://mkdocstrings.github.io/c/insiders/)
-and [installation instructions](https://mkdocstrings.github.io/c/insiders/installation/).
+This project is available to sponsors only, through my Insiders program. See Insiders [explanation](https://mkdocstrings.github.io/c/insiders/) and [installation instructions](https://mkdocstrings.github.io/c/insiders/installation/).
 
 ## Usage
 
