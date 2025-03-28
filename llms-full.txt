@@ -1,0 +1,1804 @@
+# mkdocstrings-c
+
+A C handler for mkdocstrings.
+
+Still in prototyping phase!
+
+Feedback is welcome.
+
+C99 full support, C11 partial support
+
+Since data is extraced with [pycparser](https://github.com/eliben/pycparser), only C99 is fully supported, while C11 is partially supported.
+
+## Installation
+
+```
+pip install mkdocstrings-c
+
+```
+
+## Usage
+
+With the following header file:
+
+hello.h
+
+```
+#ifndef HELLO_H
+#define HELLO_H // Header guard for `hello.h`.
+
+// Some macro that holds something.
+#define SOME_MACRO 123
+
+// Pointer to an integer.
+typedef const int* foo_t;
+
+/*
+ * My cool function that does something **cool**!
+ * 
+ * @param[in] x Input thingy!
+ * @param[out] y Output thingy!
+ * @param z Some other thing
+ */
+void foo(int* x, int* y, foo_t z);
+
+const foo_t x = ((foo_t) 0); // Random NULL pointer
+
+#endif
+
+```
+
+Generate docs for this file with this instruction in one of your Markdown page:
+
+```
+::: path/to/hello.h
+
+```
+
+This will generate the following HTML:
+
+## `HELLO_H`
+
+Header guard for `hello.h`.
+
+## `SOME_MACRO` `123`
+
+Some macro that holds something.
+
+## `foo_t` `const int*`
+
+Pointer to an integer.
+
+## `foo_t` `x`
+
+Random NULL pointer
+
+## `void` `foo` ( ``` int*``x ```, ``` int*``y ```, ``` foo_t``z ``` )
+
+My cool function that does something **cool**!
+
+| Name | Type | Description | | --- | --- | --- | | x | `int*`[in] | Input thingy! | | y | `int*`[out] | Output thingy! | | z | `foo_t` | Some other thing |
+
+# c
+
+C handler for mkdocstrings.
+
+Classes:
+
+- **`CConfig`** – C handler configuration.
+- **`CHandler`** – The C handler class.
+- **`CInputConfig`** – C handler configuration.
+- **`CInputOptions`** – Accepted input options.
+- **`COptions`** – Final options passed as template context.
+- **`CodeDoc`** – A parsed C source file.
+- **`Comment`** – A comment extracted from the source code.
+- **`DocFunc`** – A parsed function.
+- **`DocGlobalVar`** – A parsed global variable.
+- **`DocMacro`** – A parsed macro.
+- **`DocType`** – A parsed typedef.
+- **`Docstring`** – A parsed docstring.
+- **`FuncParam`** – A parameter in a function signature.
+- **`InOut`** – Enumeration for parameter direction.
+- **`Macro`** – A macro extracted from the source code.
+- **`Param`** – A parameter in a function signature.
+- **`SupportsQualsAndType`** – A protocol for types that can have qualifiers and a type.
+- **`TypeDecl`** – Enumeration for type declarations.
+- **`TypeRef`** – A reference to a type in C.
+
+Functions:
+
+- **`ast_to_decl`** – Convert a pycparser AST node to a TypeRef.
+- **`desc`** – Get the description from a docstring.
+- **`extract_comments`** – Extract comments from the source code.
+- **`extract_macros`** – Extract macros from the source code.
+- **`get_handler`** – Simply return an instance of CHandler.
+- **`lookup_type_html`** – Lookup a type and return an HTML representation.
+- **`parse_docstring`** – Parse a docstring.
+- **`tp_ref_to_str`** – Convert a TypeRef to a string.
+- **`typedef_to_str`** – Convert a typedef to a string.
+
+## CConfig
+
+```
+CConfig(options: dict[str, Any] = dict())
+
+```
+
+Bases: `CInputConfig`
+
+C handler configuration.
+
+Methods:
+
+- **`coerce`** – Coerce data.
+- **`from_data`** – Create an instance from a dictionary.
+
+Attributes:
+
+- **`options`** (`dict[str, Any]`) – Global options in mkdocs.yml.
+
+### options
+
+```
+options: dict[str, Any] = field(default_factory=dict)
+
+```
+
+Global options in mkdocs.yml.
+
+### coerce
+
+```
+coerce(**data: Any) -> MutableMapping[str, Any]
+
+```
+
+Coerce data.
+
+### from_data
+
+```
+from_data(**data: Any) -> Self
+
+```
+
+Create an instance from a dictionary.
+
+## CHandler
+
+```
+CHandler(
+    config: Mapping[str, Any], base_dir: Path, **kwargs: Any
+)
+
+```
+
+Bases: `BaseHandler`
+
+The C handler class.
+
+Parameters:
+
+- **`config`** (`Mapping[str, Any]`) – The handler configuration.
+- **`base_dir`** (`Path`) – The base directory of the project.
+- **`**kwargs`** (`Any`, default: `{}` ) – Arguments passed to the parent constructor.
+
+Methods:
+
+- **`collect`** – Collect data given an identifier and selection configuration.
+- **`do_convert_markdown`** – Render Markdown text; for use inside templates.
+- **`do_heading`** – Render an HTML heading and register it for the table of contents. For use inside templates.
+- **`get_aliases`** – Return the possible aliases for a given identifier.
+- **`get_extended_templates_dirs`** – Load template extensions for the given handler, return their templates directories.
+- **`get_headings`** – Return and clear the headings gathered so far.
+- **`get_inventory_urls`** – Return the URLs (and configuration options) of the inventory files to download.
+- **`get_options`** – Combine configuration options.
+- **`get_templates_dir`** – Return the path to the handler's templates directory.
+- **`load_inventory`** – Yield items and their URLs from an inventory file streamed from in_file.
+- **`render`** – Render a template using provided data and configuration options.
+- **`render_backlinks`** – Render backlinks.
+- **`teardown`** – Teardown the handler.
+- **`update_env`** – Update the Jinja environment with any custom settings/filters/options for this handler.
+
+Attributes:
+
+- **`base_dir`** – The base directory of the project.
+- **`config`** – The handler configuration.
+- **`custom_templates`** – The path to custom templates.
+- **`domain`** (`str`) – The cross-documentation domain/language for this handler.
+- **`enable_inventory`** (`bool`) – Whether this handler is interested in enabling the creation of the objects.inv Sphinx inventory file.
+- **`env`** – The Jinja environment.
+- **`extra_css`** (`str`) – Extra CSS.
+- **`fallback_config`** (`dict`) – Fallback configuration when searching anchors for identifiers.
+- **`fallback_theme`** (`str`) – The theme to fallback to.
+- **`global_options`** – The global options for the handler.
+- **`md`** (`Markdown`) – The Markdown instance.
+- **`mdx`** – The Markdown extensions to use.
+- **`mdx_config`** – The configuration for the Markdown extensions.
+- **`name`** (`str`) – The handler's name.
+- **`outer_layer`** (`bool`) – Whether we're in the outer Markdown conversion layer.
+- **`theme`** – The selected theme.
+
+### base_dir
+
+```
+base_dir = base_dir
+
+```
+
+The base directory of the project.
+
+### config
+
+```
+config = config
+
+```
+
+The handler configuration.
+
+### custom_templates
+
+```
+custom_templates = custom_templates
+
+```
+
+The path to custom templates.
+
+### domain
+
+```
+domain: str = 'c'
+
+```
+
+The cross-documentation domain/language for this handler.
+
+### enable_inventory
+
+```
+enable_inventory: bool = False
+
+```
+
+Whether this handler is interested in enabling the creation of the `objects.inv` Sphinx inventory file.
+
+### env
+
+```
+env = Environment(
+    autoescape=True,
+    loader=FileSystemLoader(paths),
+    auto_reload=False,
+)
+
+```
+
+The Jinja environment.
+
+### extra_css
+
+```
+extra_css: str = ''
+
+```
+
+Extra CSS.
+
+### fallback_config
+
+```
+fallback_config: dict = {}
+
+```
+
+Fallback configuration when searching anchors for identifiers.
+
+### fallback_theme
+
+```
+fallback_theme: str = 'material'
+
+```
+
+The theme to fallback to.
+
+### global_options
+
+```
+global_options = get('options', {})
+
+```
+
+The global options for the handler.
+
+### md
+
+```
+md: Markdown
+
+```
+
+The Markdown instance.
+
+Raises:
+
+- `RuntimeError` – When the Markdown instance is not set yet.
+
+### mdx
+
+```
+mdx = mdx
+
+```
+
+The Markdown extensions to use.
+
+### mdx_config
+
+```
+mdx_config = mdx_config
+
+```
+
+The configuration for the Markdown extensions.
+
+### name
+
+```
+name: str = 'c'
+
+```
+
+The handler's name.
+
+### outer_layer
+
+```
+outer_layer: bool
+
+```
+
+Whether we're in the outer Markdown conversion layer.
+
+### theme
+
+```
+theme = theme
+
+```
+
+The selected theme.
+
+### collect
+
+```
+collect(
+    identifier: str, options: COptions
+) -> CollectorItem
+
+```
+
+Collect data given an identifier and selection configuration.
+
+In the implementation, you typically call a subprocess that returns JSON, and load that JSON again into a Python dictionary for example, though the implementation is completely free.
+
+Parameters:
+
+- **`identifier`** (`str`) – An identifier that was found in a markdown document for which to collect data. For example, in Python, it would be 'mkdocstrings.handlers' to collect documentation about the handlers module. It can be anything that you can feed to the tool of your choice.
+- **`options`** (`COptions`) – All configuration options for this handler either defined globally in mkdocs.yml or locally overridden in an identifier block by the user.
+
+Returns:
+
+- `CollectorItem` – Anything you want, as long as you can feed it to the render method.
+
+### do_convert_markdown
+
+```
+do_convert_markdown(
+    text: str,
+    heading_level: int,
+    html_id: str = "",
+    *,
+    strip_paragraph: bool = False,
+    autoref_hook: AutorefsHookInterface | None = None,
+) -> Markup
+
+```
+
+Render Markdown text; for use inside templates.
+
+Parameters:
+
+- **`text`** (`str`) – The text to convert.
+- **`heading_level`** (`int`) – The base heading level to start all Markdown headings from.
+- **`html_id`** (`str`, default: `''` ) – The HTML id of the element that's considered the parent of this element.
+- **`strip_paragraph`** (`bool`, default: `False` ) – Whether to exclude the <p> tag from around the whole output.
+
+Returns:
+
+- `Markup` – An HTML string.
+
+### do_heading
+
+```
+do_heading(
+    content: Markup,
+    heading_level: int,
+    *,
+    role: str | None = None,
+    hidden: bool = False,
+    toc_label: str | None = None,
+    **attributes: str,
+) -> Markup
+
+```
+
+Render an HTML heading and register it for the table of contents. For use inside templates.
+
+Parameters:
+
+- **`content`** (`Markup`) – The HTML within the heading.
+- **`heading_level`** (`int`) – The level of heading (e.g. 3 -> h3).
+- **`role`** (`str | None`, default: `None` ) – An optional role for the object bound to this heading.
+- **`hidden`** (`bool`, default: `False` ) – If True, only register it for the table of contents, don't render anything.
+- **`toc_label`** (`str | None`, default: `None` ) – The title to use in the table of contents ('data-toc-label' attribute).
+- **`**attributes`** (`str`, default: `{}` ) – Any extra HTML attributes of the heading.
+
+Returns:
+
+- `Markup` – An HTML string.
+
+### get_aliases
+
+```
+get_aliases(identifier: str) -> tuple[str, ...]
+
+```
+
+Return the possible aliases for a given identifier.
+
+Parameters:
+
+- **`identifier`** (`str`) – The identifier to get the aliases of.
+
+Returns:
+
+- `tuple[str, ...]` – A tuple of strings - aliases.
+
+### get_extended_templates_dirs
+
+```
+get_extended_templates_dirs(handler: str) -> list[Path]
+
+```
+
+Load template extensions for the given handler, return their templates directories.
+
+Parameters:
+
+- **`handler`** (`str`) – The name of the handler to get the extended templates directory of.
+
+Returns:
+
+- `list[Path]` – The extensions templates directories.
+
+### get_headings
+
+```
+get_headings() -> Sequence[Element]
+
+```
+
+Return and clear the headings gathered so far.
+
+Returns:
+
+- `Sequence[Element]` – A list of HTML elements.
+
+### get_inventory_urls
+
+```
+get_inventory_urls() -> list[tuple[str, dict[str, Any]]]
+
+```
+
+Return the URLs (and configuration options) of the inventory files to download.
+
+### get_options
+
+```
+get_options(local_options: Mapping[str, Any]) -> COptions
+
+```
+
+Combine configuration options.
+
+### get_templates_dir
+
+```
+get_templates_dir(handler: str | None = None) -> Path
+
+```
+
+Return the path to the handler's templates directory.
+
+Override to customize how the templates directory is found.
+
+Parameters:
+
+- **`handler`** (`str | None`, default: `None` ) – The name of the handler to get the templates directory of.
+
+Raises:
+
+- `ModuleNotFoundError` – When no such handler is installed.
+- `FileNotFoundError` – When the templates directory cannot be found.
+
+Returns:
+
+- `Path` – The templates directory path.
+
+### load_inventory
+
+```
+load_inventory(
+    in_file: BinaryIO,
+    url: str,
+    base_url: str | None = None,
+    **kwargs: Any,
+) -> Iterator[tuple[str, str]]
+
+```
+
+Yield items and their URLs from an inventory file streamed from `in_file`.
+
+Parameters:
+
+- **`in_file`** (`BinaryIO`) – The binary file-like object to read the inventory from.
+- **`url`** (`str`) – The URL that this file is being streamed from (used to guess base_url).
+- **`base_url`** (`str | None`, default: `None` ) – The URL that this inventory's sub-paths are relative to.
+- **`**kwargs`** (`Any`, default: `{}` ) – Ignore additional arguments passed from the config.
+
+Yields:
+
+- `tuple[str, str]` – Tuples of (item identifier, item URL).
+
+### render
+
+```
+render(data: CodeDoc, options: COptions) -> str
+
+```
+
+Render a template using provided data and configuration options.
+
+Parameters:
+
+- **`data`** (`CodeDoc`) – The data to render that was collected above in collect().
+- **`options`** (`COptions`) – All configuration options for this handler either defined globally in mkdocs.yml or locally overridden in an identifier block by the user.
+
+Returns:
+
+- `str` – The rendered template as HTML.
+
+### render_backlinks
+
+```
+render_backlinks(
+    backlinks: Mapping[str, Iterable[Backlink]],
+) -> str
+
+```
+
+Render backlinks.
+
+### teardown
+
+```
+teardown() -> None
+
+```
+
+Teardown the handler.
+
+This method should be implemented to, for example, terminate a subprocess that was started when creating the handler instance.
+
+### update_env
+
+```
+update_env(config: dict) -> None
+
+```
+
+Update the Jinja environment with any custom settings/filters/options for this handler.
+
+Parameters:
+
+- **`config`** (`dict`) – Configuration options for mkdocs and mkdocstrings, read from mkdocs.yml. See the source code of mkdocstrings.MkdocstringsPlugin.on_config to see what's in this dictionary.
+
+## CInputConfig
+
+```
+CInputConfig(
+    options: Annotated[
+        CInputOptions,
+        _Field(
+            description="Configuration options for collecting and rendering objects."
+        ),
+    ] = CInputOptions(),
+)
+
+```
+
+C handler configuration.
+
+Methods:
+
+- **`coerce`** – Coerce data.
+- **`from_data`** – Create an instance from a dictionary.
+
+Attributes:
+
+- **`options`** (`Annotated[CInputOptions, _Field(description='Configuration options for collecting and rendering objects.')]`) – Configuration options for collecting and rendering objects.
+
+### options
+
+```
+options: Annotated[
+    CInputOptions,
+    _Field(
+        description="Configuration options for collecting and rendering objects."
+    ),
+] = field(default_factory=CInputOptions)
+
+```
+
+Configuration options for collecting and rendering objects.
+
+### coerce
+
+```
+coerce(**data: Any) -> MutableMapping[str, Any]
+
+```
+
+Coerce data.
+
+### from_data
+
+```
+from_data(**data: Any) -> Self
+
+```
+
+Create an instance from a dictionary.
+
+## CInputOptions
+
+```
+CInputOptions(
+    extra: Annotated[
+        dict[str, Any],
+        _Field(
+            group="general", description="Extra options."
+        ),
+    ] = dict(),
+    heading: Annotated[
+        str,
+        _Field(
+            group="headings",
+            description="A custom string to override the autogenerated heading of the root object.",
+        ),
+    ] = "",
+    heading_level: Annotated[
+        int,
+        _Field(
+            group="headings",
+            description="The initial heading level to use.",
+        ),
+    ] = 2,
+    show_symbol_type_heading: Annotated[
+        bool,
+        _Field(
+            group="headings",
+            description="Show the symbol type in headings (e.g. mod, class, meth, func and attr).",
+        ),
+    ] = False,
+    show_symbol_type_toc: Annotated[
+        bool,
+        _Field(
+            group="headings",
+            description="Show the symbol type in the Table of Contents (e.g. mod, class, methd, func and attr).",
+        ),
+    ] = False,
+    toc_label: Annotated[
+        str,
+        _Field(
+            group="headings",
+            description="A custom string to override the autogenerated toc label of the root object.",
+        ),
+    ] = "",
+)
+
+```
+
+Accepted input options.
+
+Methods:
+
+- **`coerce`** – Coerce data.
+- **`from_data`** – Create an instance from a dictionary.
+
+Attributes:
+
+- **`extra`** (`Annotated[dict[str, Any], _Field(group='general', description='Extra options.')]`) – Extra options.
+- **`heading`** (`Annotated[str, _Field(group='headings', description='A custom string to override the autogenerated heading of the root object.')]`) – A custom string to override the autogenerated heading of the root object.
+- **`heading_level`** (`Annotated[int, _Field(group='headings', description='The initial heading level to use.')]`) – The initial heading level to use.
+- **`show_symbol_type_heading`** (`Annotated[bool, _Field(group='headings', description='Show the symbol type in headings (e.g. mod, class, meth, func and attr).')]`) – Show the symbol type in headings (e.g. mod, class, meth, func and attr).
+- **`show_symbol_type_toc`** (`Annotated[bool, _Field(group='headings', description='Show the symbol type in the Table of Contents (e.g. mod, class, methd, func and attr).')]`) – Show the symbol type in the Table of Contents (e.g. mod, class, methd, func and attr).
+- **`toc_label`** (`Annotated[str, _Field(group='headings', description='A custom string to override the autogenerated toc label of the root object.')]`) – A custom string to override the autogenerated toc label of the root object.
+
+### extra
+
+```
+extra: Annotated[
+    dict[str, Any],
+    _Field(group="general", description="Extra options."),
+] = field(default_factory=dict)
+
+```
+
+Extra options.
+
+### heading
+
+```
+heading: Annotated[
+    str,
+    _Field(
+        group="headings",
+        description="A custom string to override the autogenerated heading of the root object.",
+    ),
+] = ""
+
+```
+
+A custom string to override the autogenerated heading of the root object.
+
+### heading_level
+
+```
+heading_level: Annotated[
+    int,
+    _Field(
+        group="headings",
+        description="The initial heading level to use.",
+    ),
+] = 2
+
+```
+
+The initial heading level to use.
+
+### show_symbol_type_heading
+
+```
+show_symbol_type_heading: Annotated[
+    bool,
+    _Field(
+        group="headings",
+        description="Show the symbol type in headings (e.g. mod, class, meth, func and attr).",
+    ),
+] = False
+
+```
+
+Show the symbol type in headings (e.g. mod, class, meth, func and attr).
+
+### show_symbol_type_toc
+
+```
+show_symbol_type_toc: Annotated[
+    bool,
+    _Field(
+        group="headings",
+        description="Show the symbol type in the Table of Contents (e.g. mod, class, methd, func and attr).",
+    ),
+] = False
+
+```
+
+Show the symbol type in the Table of Contents (e.g. mod, class, methd, func and attr).
+
+### toc_label
+
+```
+toc_label: Annotated[
+    str,
+    _Field(
+        group="headings",
+        description="A custom string to override the autogenerated toc label of the root object.",
+    ),
+] = ""
+
+```
+
+A custom string to override the autogenerated toc label of the root object.
+
+### coerce
+
+```
+coerce(**data: Any) -> MutableMapping[str, Any]
+
+```
+
+Coerce data.
+
+### from_data
+
+```
+from_data(**data: Any) -> Self
+
+```
+
+Create an instance from a dictionary.
+
+## COptions
+
+```
+COptions(
+    extra: Annotated[
+        dict[str, Any],
+        _Field(
+            group="general", description="Extra options."
+        ),
+    ] = dict(),
+    heading: Annotated[
+        str,
+        _Field(
+            group="headings",
+            description="A custom string to override the autogenerated heading of the root object.",
+        ),
+    ] = "",
+    heading_level: Annotated[
+        int,
+        _Field(
+            group="headings",
+            description="The initial heading level to use.",
+        ),
+    ] = 2,
+    show_symbol_type_heading: Annotated[
+        bool,
+        _Field(
+            group="headings",
+            description="Show the symbol type in headings (e.g. mod, class, meth, func and attr).",
+        ),
+    ] = False,
+    show_symbol_type_toc: Annotated[
+        bool,
+        _Field(
+            group="headings",
+            description="Show the symbol type in the Table of Contents (e.g. mod, class, methd, func and attr).",
+        ),
+    ] = False,
+    toc_label: Annotated[
+        str,
+        _Field(
+            group="headings",
+            description="A custom string to override the autogenerated toc label of the root object.",
+        ),
+    ] = "",
+)
+
+```
+
+Bases: `CInputOptions`
+
+Final options passed as template context.
+
+Methods:
+
+- **`coerce`** – Create an instance from a dictionary.
+- **`from_data`** – Create an instance from a dictionary.
+
+Attributes:
+
+- **`extra`** (`Annotated[dict[str, Any], _Field(group='general', description='Extra options.')]`) – Extra options.
+- **`heading`** (`Annotated[str, _Field(group='headings', description='A custom string to override the autogenerated heading of the root object.')]`) – A custom string to override the autogenerated heading of the root object.
+- **`heading_level`** (`Annotated[int, _Field(group='headings', description='The initial heading level to use.')]`) – The initial heading level to use.
+- **`show_symbol_type_heading`** (`Annotated[bool, _Field(group='headings', description='Show the symbol type in headings (e.g. mod, class, meth, func and attr).')]`) – Show the symbol type in headings (e.g. mod, class, meth, func and attr).
+- **`show_symbol_type_toc`** (`Annotated[bool, _Field(group='headings', description='Show the symbol type in the Table of Contents (e.g. mod, class, methd, func and attr).')]`) – Show the symbol type in the Table of Contents (e.g. mod, class, methd, func and attr).
+- **`toc_label`** (`Annotated[str, _Field(group='headings', description='A custom string to override the autogenerated toc label of the root object.')]`) – A custom string to override the autogenerated toc label of the root object.
+
+### extra
+
+```
+extra: Annotated[
+    dict[str, Any],
+    _Field(group="general", description="Extra options."),
+] = field(default_factory=dict)
+
+```
+
+Extra options.
+
+### heading
+
+```
+heading: Annotated[
+    str,
+    _Field(
+        group="headings",
+        description="A custom string to override the autogenerated heading of the root object.",
+    ),
+] = ""
+
+```
+
+A custom string to override the autogenerated heading of the root object.
+
+### heading_level
+
+```
+heading_level: Annotated[
+    int,
+    _Field(
+        group="headings",
+        description="The initial heading level to use.",
+    ),
+] = 2
+
+```
+
+The initial heading level to use.
+
+### show_symbol_type_heading
+
+```
+show_symbol_type_heading: Annotated[
+    bool,
+    _Field(
+        group="headings",
+        description="Show the symbol type in headings (e.g. mod, class, meth, func and attr).",
+    ),
+] = False
+
+```
+
+Show the symbol type in headings (e.g. mod, class, meth, func and attr).
+
+### show_symbol_type_toc
+
+```
+show_symbol_type_toc: Annotated[
+    bool,
+    _Field(
+        group="headings",
+        description="Show the symbol type in the Table of Contents (e.g. mod, class, methd, func and attr).",
+    ),
+] = False
+
+```
+
+Show the symbol type in the Table of Contents (e.g. mod, class, methd, func and attr).
+
+### toc_label
+
+```
+toc_label: Annotated[
+    str,
+    _Field(
+        group="headings",
+        description="A custom string to override the autogenerated toc label of the root object.",
+    ),
+] = ""
+
+```
+
+A custom string to override the autogenerated toc label of the root object.
+
+### coerce
+
+```
+coerce(**data: Any) -> MutableMapping[str, Any]
+
+```
+
+Create an instance from a dictionary.
+
+### from_data
+
+```
+from_data(**data: Any) -> Self
+
+```
+
+Create an instance from a dictionary.
+
+## CodeDoc
+
+```
+CodeDoc(
+    macros: list[DocMacro],
+    functions: list[DocFunc],
+    global_vars: list[DocGlobalVar],
+    typedefs: dict[str, DocType],
+)
+
+```
+
+A parsed C source file.
+
+Attributes:
+
+- **`functions`** (`list[DocFunc]`) – "List of functions in the source file.
+- **`global_vars`** (`list[DocGlobalVar]`) – List of global variables in the source file.
+- **`macros`** (`list[DocMacro]`) – List of macros in the source file.
+- **`typedefs`** (`dict[str, DocType]`) – List of typedefs in the source file.
+
+### functions
+
+```
+functions: list[DocFunc]
+
+```
+
+"List of functions in the source file.
+
+### global_vars
+
+```
+global_vars: list[DocGlobalVar]
+
+```
+
+List of global variables in the source file.
+
+### macros
+
+```
+macros: list[DocMacro]
+
+```
+
+List of macros in the source file.
+
+### typedefs
+
+```
+typedefs: dict[str, DocType]
+
+```
+
+List of typedefs in the source file.
+
+## Comment
+
+```
+Comment(text: str, last_line_number: int)
+
+```
+
+A comment extracted from the source code.
+
+Attributes:
+
+- **`last_line_number`** (`int`) – The last line number of the comment in the source code.
+- **`text`** (`str`) – The text of the comment.
+
+### last_line_number
+
+```
+last_line_number: int
+
+```
+
+The last line number of the comment in the source code.
+
+### text
+
+```
+text: str
+
+```
+
+The text of the comment.
+
+## DocFunc
+
+```
+DocFunc(
+    name: str,
+    args: list[FuncParam],
+    ret: TypeRef,
+    doc: Docstring | None,
+)
+
+```
+
+A parsed function.
+
+Attributes:
+
+- **`args`** (`list[FuncParam]`) – The arguments of the function.
+- **`doc`** (`Docstring | None`) – The docstring of the function.
+- **`name`** (`str`) – The name of the function.
+- **`ret`** (`TypeRef`) – The return type of the function.
+
+### args
+
+```
+args: list[FuncParam]
+
+```
+
+The arguments of the function.
+
+### doc
+
+```
+doc: Docstring | None
+
+```
+
+The docstring of the function.
+
+### name
+
+```
+name: str
+
+```
+
+The name of the function.
+
+### ret
+
+```
+ret: TypeRef
+
+```
+
+The return type of the function.
+
+## DocGlobalVar
+
+```
+DocGlobalVar(
+    name: str,
+    tp: TypeRef,
+    doc: Docstring | None,
+    quals: list[str],
+)
+
+```
+
+A parsed global variable.
+
+Attributes:
+
+- **`doc`** (`Docstring | None`) – The docstring of the global variable.
+- **`name`** (`str`) – The name of the global variable.
+- **`quals`** (`list[str]`) – The qualifiers of the global variable.
+- **`tp`** (`TypeRef`) – The type reference of the global variable.
+
+### doc
+
+```
+doc: Docstring | None
+
+```
+
+The docstring of the global variable.
+
+### name
+
+```
+name: str
+
+```
+
+The name of the global variable.
+
+### quals
+
+```
+quals: list[str]
+
+```
+
+The qualifiers of the global variable.
+
+### tp
+
+```
+tp: TypeRef
+
+```
+
+The type reference of the global variable.
+
+## DocMacro
+
+```
+DocMacro(
+    name: str, content: str | None, doc: Docstring | None
+)
+
+```
+
+A parsed macro.
+
+Attributes:
+
+- **`content`** (`str | None`) – The content of the macro.
+- **`doc`** (`Docstring | None`) – The docstring of the macro.
+- **`name`** (`str`) – The name of the macro.
+
+### content
+
+```
+content: str | None
+
+```
+
+The content of the macro.
+
+### doc
+
+```
+doc: Docstring | None
+
+```
+
+The docstring of the macro.
+
+### name
+
+```
+name: str
+
+```
+
+The name of the macro.
+
+## DocType
+
+```
+DocType(
+    name: str,
+    tp: TypeRef,
+    doc: Docstring | None,
+    quals: list[str],
+)
+
+```
+
+A parsed typedef.
+
+Attributes:
+
+- **`doc`** (`Docstring | None`) – The docstring of the typedef.
+- **`name`** (`str`) – The name of the typedef.
+- **`quals`** (`list[str]`) – The qualifiers of the typedef.
+- **`tp`** (`TypeRef`) – The type reference of the typedef.
+
+### doc
+
+```
+doc: Docstring | None
+
+```
+
+The docstring of the typedef.
+
+### name
+
+```
+name: str
+
+```
+
+The name of the typedef.
+
+### quals
+
+```
+quals: list[str]
+
+```
+
+The qualifiers of the typedef.
+
+### tp
+
+```
+tp: TypeRef
+
+```
+
+The type reference of the typedef.
+
+## Docstring
+
+```
+Docstring(
+    desc: str,
+    params: list[Param] | None = None,
+    ret: str | None = None,
+)
+
+```
+
+A parsed docstring.
+
+Attributes:
+
+- **`desc`** (`str`) – The description of the docstring.
+- **`params`** (`list[Param] | None`) – The parameters of the docstring.
+- **`ret`** (`str | None`) – The return value of the docstring.
+
+### desc
+
+```
+desc: str
+
+```
+
+The description of the docstring.
+
+### params
+
+```
+params: list[Param] | None = None
+
+```
+
+The parameters of the docstring.
+
+### ret
+
+```
+ret: str | None = None
+
+```
+
+The return value of the docstring.
+
+## FuncParam
+
+```
+FuncParam(name: str, tp: TypeRef)
+
+```
+
+A parameter in a function signature.
+
+Attributes:
+
+- **`name`** (`str`) – The name of the parameter.
+- **`tp`** (`TypeRef`) – The type reference of the parameter.
+
+### name
+
+```
+name: str
+
+```
+
+The name of the parameter.
+
+### tp
+
+```
+tp: TypeRef
+
+```
+
+The type reference of the parameter.
+
+## InOut
+
+Bases: `str`, `Enum`
+
+Enumeration for parameter direction.
+
+Attributes:
+
+- **`IN`** – The parameter is an input.
+- **`OUT`** – The parameter is an output.
+- **`UNSPECIFIED`** – The direction is unspecified.
+
+### IN
+
+```
+IN = 'in'
+
+```
+
+The parameter is an input.
+
+### OUT
+
+```
+OUT = 'out'
+
+```
+
+The parameter is an output.
+
+### UNSPECIFIED
+
+```
+UNSPECIFIED = 'unspecified'
+
+```
+
+The direction is unspecified.
+
+## Macro
+
+```
+Macro(text: str, line_number: int)
+
+```
+
+A macro extracted from the source code.
+
+Attributes:
+
+- **`line_number`** (`int`) – The line number of the macro in the source code.
+- **`text`** (`str`) – The text of the macro.
+
+### line_number
+
+```
+line_number: int
+
+```
+
+The line number of the macro in the source code.
+
+### text
+
+```
+text: str
+
+```
+
+The text of the macro.
+
+## Param
+
+```
+Param(name: str, desc: str, in_out: InOut)
+
+```
+
+A parameter in a function signature.
+
+Attributes:
+
+- **`desc`** (`str`) – The description of the parameter.
+- **`in_out`** (`InOut`) – The direction of the parameter (input, output, or unspecified).
+- **`name`** (`str`) – The name of the parameter.
+
+### desc
+
+```
+desc: str
+
+```
+
+The description of the parameter.
+
+### in_out
+
+```
+in_out: InOut
+
+```
+
+The direction of the parameter (input, output, or unspecified).
+
+### name
+
+```
+name: str
+
+```
+
+The name of the parameter.
+
+## SupportsQualsAndType
+
+Bases: `Protocol`
+
+A protocol for types that can have qualifiers and a type.
+
+Attributes:
+
+- **`quals`** (`list[str]`) – The qualifiers of the type.
+- **`type`** (`SupportsQualsAndType | TypeDecl | IdentifierType`) – The type of the node.
+
+### quals
+
+```
+quals: list[str]
+
+```
+
+The qualifiers of the type.
+
+### type
+
+```
+type: SupportsQualsAndType | TypeDecl | IdentifierType
+
+```
+
+The type of the node.
+
+## TypeDecl
+
+Bases: `str`, `Enum`
+
+Enumeration for type declarations.
+
+Attributes:
+
+- **`ARRAY`** – An array type declaration.
+- **`FUNCTION`** – A function type declaration.
+- **`NORMAL`** – A normal type declaration.
+- **`POINTER`** – A pointer type declaration.
+
+### ARRAY
+
+```
+ARRAY = 'array'
+
+```
+
+An array type declaration.
+
+### FUNCTION
+
+```
+FUNCTION = 'function'
+
+```
+
+A function type declaration.
+
+### NORMAL
+
+```
+NORMAL = 'normal'
+
+```
+
+A normal type declaration.
+
+### POINTER
+
+```
+POINTER = 'pointer'
+
+```
+
+A pointer type declaration.
+
+## TypeRef
+
+```
+TypeRef(
+    name: TypeRef | str,
+    decl: TypeDecl,
+    quals: list[str],
+    params: list[TypeRef] | None = None,
+)
+
+```
+
+A reference to a type in C.
+
+Attributes:
+
+- **`decl`** (`TypeDecl`) – The type declaration of the type reference.
+- **`name`** (`TypeRef | str`) – The name of the type reference.
+- **`params`** (`list[TypeRef] | None`) – The parameters of the type reference.
+- **`quals`** (`list[str]`) – The qualifiers of the type reference.
+
+### decl
+
+```
+decl: TypeDecl
+
+```
+
+The type declaration of the type reference.
+
+### name
+
+```
+name: TypeRef | str
+
+```
+
+The name of the type reference.
+
+### params
+
+```
+params: list[TypeRef] | None = None
+
+```
+
+The parameters of the type reference.
+
+### quals
+
+```
+quals: list[str]
+
+```
+
+The qualifiers of the type reference.
+
+## ast_to_decl
+
+```
+ast_to_decl(
+    node: SupportsQualsAndType, types: dict[str, DocType]
+) -> TypeRef
+
+```
+
+Convert a pycparser AST node to a TypeRef.
+
+## desc
+
+```
+desc(doc: Docstring | None) -> str
+
+```
+
+Get the description from a docstring.
+
+Parameters:
+
+- **`doc`** (`Docstring | None`) – The docstring to get the description from.
+
+Returns:
+
+- `str` – The description.
+
+## extract_comments
+
+```
+extract_comments(code: str) -> tuple[list[Comment], str]
+
+```
+
+Extract comments from the source code.
+
+Parameters:
+
+- **`code`** (`str`) – The source code to extract comments from.
+
+Returns:
+
+- `tuple[list[Comment], str]` – A tuple containing a list of comments and the source code with comments removed.
+
+## extract_macros
+
+```
+extract_macros(code: str) -> tuple[list[Macro], str]
+
+```
+
+Extract macros from the source code.
+
+Parameters:
+
+- **`code`** (`str`) – The source code to extract macros from.
+
+Returns:
+
+- `tuple[list[Macro], str]` – A tuple containing a list of macros and the source code with macros removed.
+
+## get_handler
+
+```
+get_handler(
+    handler_config: MutableMapping[str, Any],
+    tool_config: MkDocsConfig,
+    **kwargs: Any,
+) -> CHandler
+
+```
+
+Simply return an instance of `CHandler`.
+
+Parameters:
+
+- **`handler_config`** (`MutableMapping[str, Any]`) – The handler configuration.
+- **`tool_config`** (`MkDocsConfig`) – The tool (SSG) configuration.
+
+Returns:
+
+- `CHandler` – An instance of CHandler.
+
+## lookup_type_html
+
+```
+lookup_type_html(
+    data: CodeDoc, tp: TypeRef, *, name: str | None = None
+) -> str
+
+```
+
+Lookup a type and return an HTML representation.
+
+Parameters:
+
+- **`data`** (`CodeDoc`) – The parsed C source file.
+- **`tp`** (`TypeRef`) – The type to lookup.
+- **`name`** (`str | None`, default: `None` ) – The name of the type.
+
+Returns:
+
+- `str` – The HTML representation of the type.
+
+## parse_docstring
+
+```
+parse_docstring(content: str) -> Docstring
+
+```
+
+Parse a docstring.
+
+Parameters:
+
+- **`content`** (`str`) – The content of the docstring.
+
+Returns:
+
+- `Docstring` – A parsed docstring.
+
+## tp_ref_to_str
+
+```
+tp_ref_to_str(ref: TypeRef, qualname: str) -> str
+
+```
+
+Convert a TypeRef to a string.
+
+Parameters:
+
+- **`ref`** (`TypeRef`) – The TypeRef to convert.
+- **`qualname`** (`str`) – The name of the type.
+
+Returns:
+
+- `str` – The string representation of the TypeRef.
+
+## typedef_to_str
+
+```
+typedef_to_str(decl: DocType) -> str
+
+```
+
+Convert a typedef to a string.
+
+Parameters:
+
+- **`decl`** (`DocType`) – The typedef to convert.
+
+Returns:
+
+- `str` – The string representation of the typedef.
