@@ -14,7 +14,7 @@ insiders_repository_name: mkdocstrings-c
 language: C
 project_description: A C handler for mkdocstrings.
 project_name: mkdocstrings-c
-public_release: false
+public_release: true
 python_package_distribution_name: mkdocstrings-c
 python_package_import_name: c
 repository_name: c
