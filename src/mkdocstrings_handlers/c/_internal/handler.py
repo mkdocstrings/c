@@ -1,4 +1,4 @@
-"""This module implements a handler for the C language."""
+# This module implements a handler for the C language.
 
 from __future__ import annotations
 
@@ -10,8 +10,11 @@ from io import StringIO
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, ClassVar, Protocol
 
+from mkdocs.exceptions import PluginError
 from mkdocstrings import BaseHandler, CollectionError, CollectorItem, get_logger
 from pycparser import CParser, c_ast
+
+from mkdocstrings_handlers.c._internal.config import COptions
 
 if TYPE_CHECKING:
     from collections.abc import Mapping, MutableMapping
@@ -20,7 +23,7 @@ if TYPE_CHECKING:
     from pycparser.c_ast import FileAST
 
 
-logger = get_logger(__name__)
+_logger = get_logger(__name__)
 
 
 @dataclass
@@ -28,7 +31,9 @@ class Comment:
     """A comment extracted from the source code."""
 
     text: str
+    """The text of the comment."""
     last_line_number: int
+    """The last line number of the comment in the source code."""
 
 
 @dataclass
@@ -36,7 +41,9 @@ class Macro:
     """A macro extracted from the source code."""
 
     text: str
+    """The text of the macro."""
     line_number: int
+    """The line number of the macro in the source code."""
 
 
 _C_PARSER = CParser()
@@ -167,8 +174,11 @@ class InOut(str, Enum):
     """Enumeration for parameter direction."""
 
     UNSPECIFIED = "unspecified"
+    """The direction is unspecified."""
     IN = "in"
+    """The parameter is an input."""
     OUT = "out"
+    """The parameter is an output."""
 
 
 @dataclass
@@ -176,8 +186,11 @@ class Param:
     """A parameter in a function signature."""
 
     name: str
+    """The name of the parameter."""
     desc: str
+    """The description of the parameter."""
     in_out: InOut
+    """The direction of the parameter (input, output, or unspecified)."""
 
 
 @dataclass
@@ -185,8 +198,11 @@ class Docstring:
     """A parsed docstring."""
 
     desc: str
+    """The description of the docstring."""
     params: list[Param] | None = None
+    """The parameters of the docstring."""
     ret: str | None = None
+    """The return value of the docstring."""
 
 
 def parse_docstring(content: str) -> Docstring:
@@ -270,8 +286,11 @@ class DocMacro:
     """A parsed macro."""
 
     name: str
+    """The name of the macro."""
     content: str | None
+    """The content of the macro."""
     doc: Docstring | None
+    """The docstring of the macro."""
 
 
 @dataclass
@@ -279,9 +298,13 @@ class DocType:
     """A parsed typedef."""
 
     name: str
+    """The name of the typedef."""
     tp: TypeRef
+    """The type reference of the typedef."""
     doc: Docstring | None
+    """The docstring of the typedef."""
     quals: list[str]
+    """The qualifiers of the typedef."""
 
 
 @dataclass
@@ -289,9 +312,13 @@ class DocGlobalVar:
     """A parsed global variable."""
 
     name: str
+    """The name of the global variable."""
     tp: TypeRef
+    """The type reference of the global variable."""
     doc: Docstring | None
+    """The docstring of the global variable."""
     quals: list[str]
+    """The qualifiers of the global variable."""
 
 
 @dataclass
@@ -299,7 +326,9 @@ class FuncParam:
     """A parameter in a function signature."""
 
     name: str
+    """The name of the parameter."""
     tp: TypeRef
+    """The type reference of the parameter."""
 
 
 @dataclass
@@ -307,9 +336,13 @@ class DocFunc:
     """A parsed function."""
 
     name: str
+    """The name of the function."""
     args: list[FuncParam]
+    """The arguments of the function."""
     ret: TypeRef
+    """The return type of the function."""
     doc: Docstring | None
+    """The docstring of the function."""
 
 
 @dataclass
@@ -317,18 +350,26 @@ class CodeDoc:
     """A parsed C source file."""
 
     macros: list[DocMacro]
+    """List of macros in the source file."""
     functions: list[DocFunc]
+    """"List of functions in the source file."""
     global_vars: list[DocGlobalVar]
+    """List of global variables in the source file."""
     typedefs: dict[str, DocType]
+    """List of typedefs in the source file."""
 
 
 class TypeDecl(str, Enum):
     """Enumeration for type declarations."""
 
     NORMAL = "normal"
+    """A normal type declaration."""
     POINTER = "pointer"
+    """A pointer type declaration."""
     ARRAY = "array"
+    """An array type declaration."""
     FUNCTION = "function"
+    """A function type declaration."""
 
 
 @dataclass
@@ -336,16 +377,22 @@ class TypeRef:
     """A reference to a type in C."""
 
     name: TypeRef | str
+    """The name of the type reference."""
     decl: TypeDecl
+    """The type declaration of the type reference."""
     quals: list[str]
+    """The qualifiers of the type reference."""
     params: list[TypeRef] | None = None  # only in functions
+    """The parameters of the type reference."""
 
 
 class SupportsQualsAndType(Protocol):
     """A protocol for types that can have qualifiers and a type."""
 
     quals: list[str]
+    """The qualifiers of the type."""
     type: SupportsQualsAndType | c_ast.TypeDecl | c_ast.IdentifierType
+    """The type of the node."""
 
 
 def ast_to_decl(node: SupportsQualsAndType, types: dict[str, DocType]) -> TypeRef:
@@ -477,25 +524,6 @@ class CHandler(BaseHandler):
     fallback_theme: ClassVar[str] = "material"
     """The theme to fallback to."""
 
-    fallback_config: ClassVar[dict] = {"fallback": True}
-    """The configuration used to collect item during autorefs fallback."""
-
-    default_config: ClassVar[dict] = {
-        "show_root_heading": False,
-        "show_root_toc_entry": True,
-        "show_symbol_type_heading": True,
-        "show_symbol_type_toc_entry": True,
-        "heading_level": 2,
-    }
-    """The default configuration options.
-
-    Option | Type | Description | Default
-    ------ | ---- | ----------- | -------
-    **`show_root_heading`** | `bool` | Show the heading of the object at the root of the documentation tree. | `False`
-    **`show_root_toc_entry`** | `bool` | If the root heading is not shown, at least add a ToC entry for it. | `True`
-    **`heading_level`** | `int` | The initial heading level to use. | `2`
-    """
-
     def __init__(self, config: Mapping[str, Any], base_dir: Path, **kwargs: Any) -> None:
         """Initialize the handler.
 
@@ -507,14 +535,22 @@ class CHandler(BaseHandler):
         super().__init__(**kwargs)
 
         self.config = config
+        """The handler configuration."""
         self.base_dir = base_dir
+        """The base directory of the project."""
         self.global_options = config.get("options", {})
+        """The global options for the handler."""
 
-    def get_options(self, local_options: Mapping[str, Any]) -> Mapping[str, Any]:
+    def get_options(self, local_options: Mapping[str, Any]) -> COptions:
         """Combine configuration options."""
-        return {**self.default_config, **self.global_options, **local_options}
+        extra = {**self.global_options.get("extra", {}), **local_options.get("extra", {})}
+        options = {**self.global_options, **local_options, "extra": extra}
+        try:
+            return COptions.from_data(**options)
+        except Exception as error:
+            raise PluginError(f"Invalid options: {error}") from error
 
-    def collect(self, identifier: str, options: MutableMapping[str, Any]) -> CollectorItem:
+    def collect(self, identifier: str, options: COptions) -> CollectorItem:
         """Collect data given an identifier and selection configuration.
 
         In the implementation, you typically call a subprocess that returns JSON, and load that JSON again into
@@ -530,7 +566,7 @@ class CHandler(BaseHandler):
         Returns:
             Anything you want, as long as you can feed it to the `render` method.
         """
-        if options.get("fallback", False):
+        if options == {}:
             raise CollectionError("Not loading additional headers during fallback")
 
         source = Path(identifier).read_text(encoding="utf-8")
@@ -607,7 +643,7 @@ class CHandler(BaseHandler):
 
         return CodeDoc(macros, funcs, global_vars, types)
 
-    def render(self, data: CodeDoc, options: MutableMapping[str, Any]) -> str:
+    def render(self, data: CodeDoc, options: COptions) -> str:
         """Render a template using provided data and configuration options.
 
         Parameters:
@@ -618,7 +654,7 @@ class CHandler(BaseHandler):
         Returns:
             The rendered template as HTML.
         """
-        heading_level = options["heading_level"]
+        heading_level = options.heading_level
         template = self.env.get_template("header.html.jinja")
         return template.render(
             config=options,
