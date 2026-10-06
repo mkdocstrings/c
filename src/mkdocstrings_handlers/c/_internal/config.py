@@ -2,18 +2,10 @@
 
 from __future__ import annotations
 
-import sys
 from dataclasses import field
-from typing import TYPE_CHECKING, Annotated, Any, Literal
+from typing import TYPE_CHECKING, Annotated, Any, Literal, Self
 
 from mkdocstrings import get_logger
-
-# YORE: EOL 3.10: Replace block with line 2.
-if sys.version_info >= (3, 11):
-    from typing import Self
-else:
-    from typing_extensions import Self
-
 
 _logger = get_logger(__name__)
 
@@ -34,18 +26,6 @@ try:
 
     if getattr(pydantic, "__version__", "1.").startswith("1."):
         raise ImportError  # noqa: TRY301
-
-    # YORE: EOL 3.9: Remove block.
-    if sys.version_info < (3, 10):
-        try:
-            import eval_type_backport  # noqa: F401
-        except ImportError:
-            _logger.debug(
-                "Pydantic needs the `eval-type-backport` package to be installed "
-                "for modern type syntax to work on Python 3.9. "
-                "Deactivating Pydantic validation for C handler options.",
-            )
-            raise
 
     from inspect import cleandoc
 
@@ -83,15 +63,8 @@ if TYPE_CHECKING:
     from collections.abc import MutableMapping
 
 
-# YORE: EOL 3.9: Remove block.
-_dataclass_options = {"frozen": True}
-if sys.version_info >= (3, 10):
-    _dataclass_options["kw_only"] = True
-
-
 # The input config class is useful to generate a JSON schema, see scripts/mkdocs_hooks.py.
-# YORE: EOL 3.9: Replace `**_dataclass_options` with `frozen=True, kw_only=True` within line.
-@dataclass(**_dataclass_options)  # type: ignore[call-overload]
+@dataclass(frozen=True, kw_only=True)
 class CInputOptions:
     """Accepted input options."""
 
@@ -154,8 +127,7 @@ class CInputOptions:
         return cls(**cls.coerce(**data))
 
 
-# YORE: EOL 3.9: Replace `**_dataclass_options` with `frozen=True, kw_only=True` within line.
-@dataclass(**_dataclass_options)  # type: ignore[call-overload]
+@dataclass(frozen=True, kw_only=True)
 class COptions(CInputOptions):  # type: ignore[override,unused-ignore]
     """Final options passed as template context."""
 
@@ -169,8 +141,7 @@ class COptions(CInputOptions):  # type: ignore[override,unused-ignore]
 
 
 # The input config class is useful to generate a JSON schema, see scripts/mkdocs_hooks.py.
-# YORE: EOL 3.9: Replace `**_dataclass_options` with `frozen=True, kw_only=True` within line.
-@dataclass(**_dataclass_options)  # type: ignore[call-overload]
+@dataclass(frozen=True, kw_only=True)
 class CInputConfig:
     """C handler configuration."""
 
@@ -191,8 +162,7 @@ class CInputConfig:
         return cls(**cls.coerce(**data))
 
 
-# YORE: EOL 3.9: Replace `**_dataclass_options` with `frozen=True, kw_only=True` within line.
-@dataclass(**_dataclass_options)  # type: ignore[call-overload]
+@dataclass(frozen=True, kw_only=True)
 class CConfig(CInputConfig):  # type: ignore[override,unused-ignore]
     """C handler configuration."""
 

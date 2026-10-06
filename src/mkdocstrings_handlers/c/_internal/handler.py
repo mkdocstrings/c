@@ -5,7 +5,7 @@ from __future__ import annotations
 import re
 from collections.abc import Mapping, MutableMapping
 from dataclasses import dataclass
-from enum import Enum
+from enum import StrEnum
 from io import StringIO
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, ClassVar, Protocol
@@ -170,7 +170,7 @@ def extract_macros(code: str) -> tuple[list[Macro], str]:
     return macros, "\n".join(extracted)
 
 
-class InOut(str, Enum):
+class InOut(StrEnum):
     """Enumeration for parameter direction."""
 
     UNSPECIFIED = "unspecified"
@@ -359,7 +359,7 @@ class CodeDoc:
     """List of typedefs in the source file."""
 
 
-class TypeDecl(str, Enum):
+class TypeDecl(StrEnum):
     """Enumeration for type declarations."""
 
     NORMAL = "normal"
@@ -607,7 +607,7 @@ class CHandler(BaseHandler):
                     # assert ref.params is not None, "function typeref does not have parameters"
                     params: list[FuncParam] = []
 
-                    for param_ref, param in zip(ref.params, node.type.args.params):  # type: ignore[arg-type]
+                    for param_ref, param in zip(ref.params, node.type.args.params, strict=False):  # type: ignore[arg-type]
                         params.append(FuncParam(param.name, param_ref))
 
                     funcs.append(DocFunc(node.name, params, ref.name, docstring))  # type: ignore[arg-type]
