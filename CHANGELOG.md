@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.1.1](https://github.com/mkdocstrings/c/releases/tag/0.1.1) - 2026-10-06
+
+<small>[Compare with 0.1.0](https://github.com/mkdocstrings/c/compare/0.1.0...0.1.1)</small>
+
+### Build
+
+- Drop support for Python 3.10 ([6bb6d36](https://github.com/mkdocstrings/c/commit/6bb6d361ddb3d93bc804eac523d7dce378095041) by Timothée Mazzucotelli).
+
 ## [0.1.0](https://github.com/mkdocstrings/c/releases/tag/0.1.0) - 2025-03-28
 
 <small>[Compare with first commit](https://github.com/mkdocstrings/c/compare/eb1b671ccb6d93c54f277234731b5a6d01618a3e...0.1.0)</small>
