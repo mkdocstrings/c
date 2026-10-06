@@ -643,7 +643,7 @@ class CHandler(BaseHandler):
 
         return CodeDoc(macros, funcs, global_vars, types)
 
-    def render(self, data: CodeDoc, options: COptions) -> str:
+    def render(self, data: CodeDoc, options: COptions) -> str:  # type: ignore[override]
         """Render a template using provided data and configuration options.
 
         Parameters:
