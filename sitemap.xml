@@ -2,62 +2,50 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://mkdocstrings.github.io/c/</loc>
-         <lastmod>2025-03-28</lastmod>
+         <lastmod>2026-10-06</lastmod>
     </url>
     <url>
          <loc>https://mkdocstrings.github.io/c/changelog/</loc>
-         <lastmod>2025-03-28</lastmod>
+         <lastmod>2026-10-06</lastmod>
     </url>
     <url>
          <loc>https://mkdocstrings.github.io/c/code_of_conduct/</loc>
-         <lastmod>2025-03-28</lastmod>
+         <lastmod>2026-10-06</lastmod>
     </url>
     <url>
          <loc>https://mkdocstrings.github.io/c/contributing/</loc>
-         <lastmod>2025-03-28</lastmod>
+         <lastmod>2026-10-06</lastmod>
     </url>
     <url>
          <loc>https://mkdocstrings.github.io/c/credits/</loc>
-         <lastmod>2025-03-28</lastmod>
+         <lastmod>2026-10-06</lastmod>
     </url>
     <url>
          <loc>https://mkdocstrings.github.io/c/license/</loc>
-         <lastmod>2025-03-28</lastmod>
-    </url>
-    <url>
-         <loc>https://mkdocstrings.github.io/c/insiders/</loc>
-         <lastmod>2025-03-28</lastmod>
-    </url>
-    <url>
-         <loc>https://mkdocstrings.github.io/c/insiders/changelog/</loc>
-         <lastmod>2025-03-28</lastmod>
-    </url>
-    <url>
-         <loc>https://mkdocstrings.github.io/c/insiders/installation/</loc>
-         <lastmod>2025-03-28</lastmod>
+         <lastmod>2026-10-06</lastmod>
     </url>
     <url>
          <loc>https://mkdocstrings.github.io/c/reference/api/</loc>
-         <lastmod>2025-03-28</lastmod>
+         <lastmod>2026-10-06</lastmod>
     </url>
     <url>
          <loc>https://mkdocstrings.github.io/c/usage/customization/</loc>
-         <lastmod>2025-03-28</lastmod>
+         <lastmod>2026-10-06</lastmod>
     </url>
     <url>
          <loc>https://mkdocstrings.github.io/c/usage/configuration/</loc>
-         <lastmod>2025-03-28</lastmod>
+         <lastmod>2026-10-06</lastmod>
     </url>
     <url>
          <loc>https://mkdocstrings.github.io/c/usage/configuration/general/</loc>
-         <lastmod>2025-03-28</lastmod>
+         <lastmod>2026-10-06</lastmod>
     </url>
     <url>
          <loc>https://mkdocstrings.github.io/c/usage/configuration/headings/</loc>
-         <lastmod>2025-03-28</lastmod>
+         <lastmod>2026-10-06</lastmod>
     </url>
     <url>
          <loc>https://mkdocstrings.github.io/c/coverage/</loc>
-         <lastmod>2025-03-28</lastmod>
+         <lastmod>2026-10-06</lastmod>
     </url>
 </urlset>

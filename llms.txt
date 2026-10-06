@@ -1,0 +1,12 @@
+# mkdocstrings-c
+
+> A C handler for mkdocstrings.
+
+## Usage
+
+- [Overview](https://mkdocstrings.github.io/c/index.md)
+
+## API
+
+- [API reference](https://mkdocstrings.github.io/c/reference/api/index.md)
+
